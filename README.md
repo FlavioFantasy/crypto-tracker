@@ -18,4 +18,5 @@ pip install -e .
 
 ```
 crypto-tracker --help
+crypto-tracker aaa
 ```
