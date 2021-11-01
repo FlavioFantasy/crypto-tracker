@@ -1,0 +1,1 @@
+[INFO] 2021/11/01 - 22:21:15 - saved 27 coin balances on db (from 2021-10-05 to 2021-10-31)

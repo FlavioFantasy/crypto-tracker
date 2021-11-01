@@ -6,6 +6,8 @@ import click
 from tracker import db_handler, coingecko_api
 from tracker.utils import exit_with_failure, valid_date
 from tracker.db_handler import *
+from tracker.coin_balances import coinbal_update
+from tracker.prices import prices_update
 
 # add ---------------------------------------------------------------------------------------------
 
@@ -196,64 +198,16 @@ def list_withdraws():
 @click.command(name="update_coin_balances")
 def update_coin_balances():
     """
-    Add the coin balances if needed (based on all deposit and withdraws)
+    Add the coin balances in the db if needed (based on all deposit and withdraws)
     """
 
-    all_transactions = db_get_all_transactions()
-    # print(json.dumps(all_transactions, indent=2, default=str))
+    coinbal_update()
 
-    # get all dates
-    start_date_str = all_transactions[0]["date"]
-    start_date = datetime.strptime(start_date_str, "%Y-%m-%d").date()
-    today = datetime.today().date()
-    all_dates = [start_date + timedelta(days=x) for x in range((today - start_date).days)]
 
-    # calculate balances for each date
-    balances = []
+@click.command(name="update_prices")
+def update_prices():
+    """
+    Add the coins price for each date in the db if needed (i have that coin in that date)
+    """
 
-    for date in all_dates:
-        str_date = date.strftime("%Y-%m-%d")
-
-        date_bal = {
-            "date": str_date
-        }
-
-        to_remove = []
-
-        # calculate balances for transactions we are considering
-        yesterday_coins = balances[-1]["coins"] if len(balances) > 0 else []
-        date_coins = copy.deepcopy(yesterday_coins)
-
-        for t in [tx for tx in all_transactions if tx["date"] == str_date]:
-
-            # add if coin not in list
-            if t["coin_id"] not in [c["coin_id"] for c in date_coins]:
-                date_coins.append({
-                    "coin_id": t["coin_id"],
-                    "amount": 0
-                })
-
-            # get coin ref
-            coin_ref = next((item for item in date_coins if item["coin_id"] == t["coin_id"]), None)
-
-            # in or out
-            if t["action"] == "in":
-                coin_ref["amount"] += t["amount"]
-            else:
-                coin_ref["amount"] -= t["amount"]
-
-                if coin_ref["amount"] == 0:
-                    to_remove.append(t["coin_id"])
-
-        # cleanup
-        for c_rem in to_remove:
-            date_coins = [c for c in date_coins if c["coin_id"] != c_rem]
-
-        date_bal["coins"] = date_coins
-
-        # append to all
-        # print(date_bal)
-        balances.append(date_bal)
-
-    for b in balances:
-        print(b)
+    prices_update()
