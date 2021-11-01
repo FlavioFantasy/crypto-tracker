@@ -1,0 +1,10 @@
+[DEFAULT]
+
+# location of files
+LOG_FILE =
+DB_FILE =
+
+# telegram data
+TELEGRAM_TOKEN = aaa
+TELEGRAM_CHATID = bbb
+
