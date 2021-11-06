@@ -200,7 +200,6 @@ def update_coin_balances():
     """
     Add the coin balances in the db if needed (based on all deposit and withdraws)
     """
-
     coinbal_update()
 
 
@@ -210,5 +209,13 @@ def update_prices():
     Add the coins price for each date in the db if needed (i have that coin in that date).
     To run after update_coin_balances
     """
+    prices_update()
 
+
+@click.command(name="update_tot_balances")
+def update_prices():
+    """
+    Add the total balances of the portfolio (eur and usd) for all dates needed.
+    To run after update_coin_balances and update_prices
+    """
     prices_update()

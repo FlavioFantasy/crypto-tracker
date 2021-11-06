@@ -280,6 +280,28 @@ def db_get_missing_prices():
     conn.close()
     return tuple_rows_to_dict(res)
 
+def db_get_missing_tot_balances():
+    conn = get_conn()
+    curr = conn.cursor()
+
+    sql_select = '''
+        SELECT CB.date, CB.amount, P.coin_eur, P.coin_usd
+        FROM coin_balances as CB
+        JOIN prices as P
+            on CB.coin_id = P.coin_id and CB.date = P.date
+        WHERE NOT EXISTS
+            (SELECT *
+            FROM tot_balances as TB
+            WHERE TB.date = CB.date
+            )
+    '''
+
+    curr.execute(sql_select)
+    res = curr.fetchall()
+
+    conn.close()
+    return tuple_rows_to_dict(res)
+
 # insert ------------------------------------------------------------------------------------------
 
 def db_add_coin(symbol: str, name: str, coingecko_id: str):
