@@ -207,7 +207,8 @@ def update_coin_balances():
 @click.command(name="update_prices")
 def update_prices():
     """
-    Add the coins price for each date in the db if needed (i have that coin in that date)
+    Add the coins price for each date in the db if needed (i have that coin in that date).
+    To run after update_coin_balances
     """
 
     prices_update()

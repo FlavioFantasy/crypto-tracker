@@ -1,1 +1,9 @@
 [INFO] 2021/11/01 - 22:21:15 - saved 27 coin balances on db (from 2021-10-05 to 2021-10-31)
+[INFO] 2021/11/06 - 23:57:50 - saved 43 prices on db (from 2021-10-05 to 2021-10-31) 
+[INFO] 2021/11/07 - 00:02:28 - prices_update: no update were made 
+[INFO] 2021/11/07 - 00:03:30 - prices_update: no update were made 
+[INFO] 2021/11/07 - 00:05:13 - prices_update: saved 4 prices on db (from 2021-10-06 to 2021-10-31) 
+[INFO] 2021/11/07 - 00:05:44 - prices_update: saved 4 prices on db (from 2021-10-06 to 2021-10-31) 
+[INFO] 2021/11/07 - 00:06:45 - prices_update: saved 4 prices on db (from 2021-10-06 to 2021-10-31) 
+[INFO] 2021/11/07 - 00:07:32 - prices_update: saved 4 prices on db (from 2021-10-06 to 2021-10-31) 
+[INFO] 2021/11/07 - 00:08:07 - prices_update: no update were made 

@@ -81,8 +81,11 @@ def coinbal_save_on_db(balances: List[dict]):
 
 def coinbal_update():
     balances = coinbal_get()
-    coinbal_save_on_db(balances)
+    if len(balances) > 0:
+        coinbal_save_on_db(balances)
+        str_to_show = f"coinbal_update: saved {len(balances)} coin balances on db (from {balances[0]['date']} to {balances[-1]['date']})"
+    else:
+        str_to_show = "coinbal_update: no update were made"
 
-    str_to_show = f"saved {len(balances)} coin balances on db (from {balances[0]['date']} to {balances[-1]['date']})"
     utils.log_info(str_to_show)
     print(str_to_show)
