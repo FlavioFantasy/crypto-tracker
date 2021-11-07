@@ -18,3 +18,17 @@
 [INFO] 2021/11/07 - 18:54:41 - prices_update: saved 105 prices on db (from 2021-10-04 to 2021-11-06) 
 [INFO] 2021/11/07 - 18:55:25 - tot_balances_update: saved 187 tot_bal on db (from 2021-05-04 to 2021-11-06) 
 [INFO] 2021/11/07 - 18:57:49 - tot_balances_update: no update were made 
+[INFO] 2021/11/07 - 21:20:01 - tot_balances_update: no update were made 
+[INFO] 2021/11/07 - 21:20:52 - tot_balances_update: no update were made 
+[INFO] 2021/11/07 - 21:36:29 - coinbal_update: no update were made 
+[INFO] 2021/11/07 - 21:36:29 - prices_update: no update were made 
+[INFO] 2021/11/07 - 21:36:29 - tot_balances_update: no update were made 
+[INFO] 2021/11/07 - 21:37:21 - coinbal_update: no update were made 
+[INFO] 2021/11/07 - 21:37:21 - prices_update: no update were made 
+[INFO] 2021/11/07 - 21:37:21 - tot_balances_update: no update were made 
+[INFO] 2021/11/07 - 21:38:12 - coinbal_update: no update were made 
+[INFO] 2021/11/07 - 21:38:12 - prices_update: no update were made 
+[INFO] 2021/11/07 - 21:38:12 - tot_balances_update: no update were made 
+[INFO] 2021/11/07 - 21:43:16 - coinbal_update: no update were made 
+[INFO] 2021/11/07 - 21:43:16 - prices_update: no update were made 
+[INFO] 2021/11/07 - 21:43:16 - tot_balances_update: no update were made 

@@ -1,14 +1,12 @@
-import copy
-from datetime import datetime, timedelta
-
 import click
 
-from tracker import db_handler, coingecko_api
-from tracker.utils import exit_with_failure, valid_date
-from tracker.db_handler import *
 from tracker.coin_balances import coinbal_update
+from tracker.db_handler import *
 from tracker.prices import prices_update
 from tracker.tot_balances import tot_balances_update
+from tracker.utils import exit_with_failure, valid_date
+from tracker.recurrent_update import recurrent_update
+
 
 # add ---------------------------------------------------------------------------------------------
 
@@ -220,3 +218,11 @@ def update_tot_balances():
     To run after update_coin_balances and update_prices
     """
     tot_balances_update()
+
+
+@click.command(name="update_all")
+def update_all():
+    """
+    Do all updates necessary (coin_balances, prices and total_balances) and the updated graph.
+    """
+    recurrent_update()
