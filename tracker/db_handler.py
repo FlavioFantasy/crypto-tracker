@@ -1,9 +1,8 @@
-import json
 import sqlite3
-from sqlite3.dbapi2 import connect
 from typing import Dict, List, Tuple
+
 from tracker.config import CurrentConf
-from tracker.coingecko_api import cg_get_prices_by_date
+
 
 # general -----------------------------------------------------------------------------------------
 
@@ -391,8 +390,8 @@ def prepare_db():
     db_add_coin("ETH", "Ethereum", "ethereum")
 
 
-if __name__ == '__main__':
-    pass
+# if __name__ == '__main__':
+#     pass
 
     # print(prepare_db())
 
@@ -413,4 +412,4 @@ if __name__ == '__main__':
     # print(db_get_prices())
     # print()
 
-    print(db_get_coin_id_by_symbol("a"))
+    # print(db_get_coin_id_by_symbol("a"))

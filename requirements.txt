@@ -4,7 +4,7 @@ certifi==2021.10.8
 charset-normalizer==2.0.7
 click==8.0.3
 colorama==0.4.4
--e git+https://github.com/FlavioFantasy/crypto-tracker.git@726db864657533408eae516a64379180a8ab0878#egg=crypto_tracker
+-e git+https://github.com/FlavioFantasy/crypto-tracker.git@a65b906e4b365cca462b05636c8822c6ad73e6af#egg=crypto_tracker
 idna==3.3
 kaleido==0.2.1
 numpy==1.21.4
@@ -22,5 +22,3 @@ tornado==6.1
 tzdata==2021.5
 tzlocal==4.1
 urllib3==1.26.7
-
-setuptools~=57.0.0

@@ -1,10 +1,12 @@
 [DEFAULT]
 
 # location of files
-LOG_FILE =
-DB_FILE =
+LOG_FILE = tracker\db\log.txt
+DB_FILE = tracker\db\my_db.db
 
 # telegram data
-TELEGRAM_TOKEN = aaa
-TELEGRAM_CHATID = bbb
+# token of bot (send messages)
+TELEGRAM_TOKEN =
+# chat id of dst
+TELEGRAM_CHATID =
 
