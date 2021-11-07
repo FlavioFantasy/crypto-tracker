@@ -1,5 +1,6 @@
 import sqlite3
 from typing import Dict, List, Tuple
+import os
 
 from tracker.config import CurrentConf
 
@@ -390,10 +391,10 @@ def prepare_db():
     db_add_coin("ETH", "Ethereum", "ethereum")
 
 
-# if __name__ == '__main__':
-#     pass
+if __name__ == '__main__':
+    pass
 
-    # print(prepare_db())
+    print(db_create_tables())
 
     # print(db_get_coins())
     # print(db_get_prices())

@@ -11,6 +11,8 @@ def crypto_tracker() -> None:
     pass  # pragma: no cover
 
 
+crypto_tracker.add_command(setup_all)
+
 crypto_tracker.add_command(add_coin)
 crypto_tracker.add_command(add_deposit)
 crypto_tracker.add_command(add_withdraw)

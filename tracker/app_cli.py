@@ -7,6 +7,18 @@ from tracker.tot_balances import tot_balances_update
 from tracker.utils import exit_with_failure, valid_date
 from tracker.recurrent_update import recurrent_update
 
+# setup -------------------------------------------------------------------------------------------
+
+@click.command(name="setup_all")
+def setup_all():
+    """
+    Setup the app (create db)
+    """
+    ok, res = db_create_tables()
+    if ok:
+        print("DB tables created successfully")
+    else:
+        print(f"ERROR: {res}")
 
 # add ---------------------------------------------------------------------------------------------
 

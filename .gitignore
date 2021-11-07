@@ -128,4 +128,6 @@ dmypy.json
 # Pyre type checker
 .pyre/
 
+# my files (flavio's)
 config.ini
+tracker/db/my_db.db
