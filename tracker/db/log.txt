@@ -1,0 +1,3 @@
+[INFO] 2021/11/07 - 22:13:37 - coinbal_update: no update were made
+[INFO] 2021/11/07 - 22:13:37 - prices_update: no update were made
+[INFO] 2021/11/07 - 22:13:37 - tot_balances_update: no update were made

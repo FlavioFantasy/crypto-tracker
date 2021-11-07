@@ -7,6 +7,7 @@ from datetime import datetime
 
 from tracker.db_handler import db_get_tot_balances
 from tracker.telegram_handler import send_image
+from tracker.utils import log_info
 
 def draw_and_send():
     all_balances = db_get_tot_balances()
@@ -22,6 +23,7 @@ def draw_and_send():
 
     send_image(img_name)
     print("graph_drawer: sent image")
+    log_info("graph_drawer: sent image")
 
 
 # if __name__ == '__main__':
