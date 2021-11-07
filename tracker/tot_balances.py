@@ -4,22 +4,41 @@ from typing import List
 
 from tracker import utils
 from tracker.db_handler import *
-import coingecko_api
+# from tracker.coingecko_api import *
 import re
+import operator
+import itertools
 
 def tot_balances_get():
 
     missing_tot_bals = db_get_missing_tot_balances()
 
-    tot_bals = []
-    # TODO : from here
-    # find a way to group tot_bals to calculate for date, so that i can easy do the math on totals
-    for b in missing_tot_bals:
-        print(b)
+    # group missing total balances by date
+    grouped_missing = []
+    missing_tot_bals = sorted(missing_tot_bals, key=operator.itemgetter("date"))
+    for i, g in itertools.groupby(missing_tot_bals, key=operator.itemgetter("date")):
+        grouped_missing.append(list(g))
 
-    for b in tot_bals:
-        print(f"b: {b}")
-    print()
+    # print(f"grouped:")
+    # print(json.dumps(grouped_missing, indent=2, default=str))
+
+    # calculate total balances
+    tot_bals = []
+    for date_group in grouped_missing:
+        # print(f"date_group: {date_group}")
+        date_bal = {
+            "date": date_group[0]["date"],
+            "eur_amount": 0.0,
+            "usd_amount": 0.0
+        }
+        for entry in date_group:
+            date_bal["eur_amount"] += entry["amount"] * entry["coin_eur"]
+            date_bal["usd_amount"] += entry["amount"] * entry["coin_usd"]
+        tot_bals.append(date_bal)
+
+    # for b in tot_bals:
+    #     print(f"tb: {b}")
+    # print()
 
     return tot_bals
 
@@ -41,8 +60,7 @@ def tot_balances_update():
     print(str_to_show)
 
 
-if __name__ == '__main__':
-    tot_balances_get()
-    # tot_balances_update()
+# if __name__ == '__main__':
+#     tot_balances_update()
 
 

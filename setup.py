@@ -10,7 +10,7 @@ setup(
     author_email=tracker.__author_email__,
     include_package_data=True,
     entry_points={"console_scripts":
-                  ["crypto-tracker = tracker.__main__:crypto_tracker"]
+                  ["tracker = tracker.__main__:crypto_tracker"]
                   },
     python_requires=">=3.9",
     classifiers=[

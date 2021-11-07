@@ -1,30 +1,55 @@
 import copy
+import time
 from datetime import datetime, timedelta
 from typing import List
 
+import requests
+
 from tracker import utils
 from tracker.db_handler import *
-import coingecko_api
+from tracker.coingecko_api import *
 import re
 
 def prices_get():
+
+    def elaborate_missing_prices(all_coins_: List[dict], missing_prices_: List[dict], prices_: List[dict]) -> None:
+        for mp_ in missing_prices_:
+            coins_ = [c for c in all_coins_ if c["id"] == mp_["coin_id"]]
+            date_ = mp_["date"]
+            print(f"getting prices for {date_} - {coins_[0]['symbol']}")
+            prices_date_ = cg_get_prices_by_date(coins_, date_)
+
+            prices_ += prices_date_
+
     # find which data are missing from the prices table, based on date and coin present in coin_balances
     missing_prices = db_get_missing_prices()
-    print(f"missing_prices: {missing_prices}")
+    # print(f"missing_prices: {missing_prices}")
     all_coins = db_get_coins()
 
-    todo_prices = []
-    for mp in missing_prices:
-        coins = [c for c in all_coins if c["id"] == mp["coin_id"]]
-        date = mp["date"]
-        prices = cg_get_prices_by_date(coins, date)
-        todo_prices += prices
+    prices = []
+    num_done = 0
+    num_tot = len(missing_prices)
 
-    for p in todo_prices:
-        print(f"p: {p}")
-    print()
+    # try untill it fails (max req in a minute)
+    while num_done < num_tot:
+        try:
+            # do from what i have done
+            elaborate_missing_prices(all_coins, missing_prices[num_done:], prices)
 
-    return todo_prices
+            num_done = len(prices)
+
+        # exceded 50 reqs in a minute
+        except requests.exceptions.HTTPError:
+            num_done = len(prices)
+            print(f" > Done {num_done} out of {num_tot}, waiting 62 secs ...")
+            time.sleep(62)
+
+    # feedback
+    # for p in prices:
+    #     print(f"p: {p}")
+    # print()
+
+    return prices
 
 
 def prices_save_on_db(prices: List[dict]):
@@ -44,7 +69,7 @@ def prices_update():
     print(str_to_show)
 
 
-if __name__ == '__main__':
-    prices_update()
+# if __name__ == '__main__':
+#     prices_update()
 
 

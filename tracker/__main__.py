@@ -21,3 +21,4 @@ crypto_tracker.add_command(list_withdraws)
 
 crypto_tracker.add_command(update_coin_balances)
 crypto_tracker.add_command(update_prices)
+crypto_tracker.add_command(update_tot_balances)

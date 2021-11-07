@@ -8,6 +8,7 @@ from tracker.utils import exit_with_failure, valid_date
 from tracker.db_handler import *
 from tracker.coin_balances import coinbal_update
 from tracker.prices import prices_update
+from tracker.tot_balances import tot_balances_update
 
 # add ---------------------------------------------------------------------------------------------
 
@@ -213,9 +214,9 @@ def update_prices():
 
 
 @click.command(name="update_tot_balances")
-def update_prices():
+def update_tot_balances():
     """
     Add the total balances of the portfolio (eur and usd) for all dates needed.
     To run after update_coin_balances and update_prices
     """
-    prices_update()
+    tot_balances_update()
