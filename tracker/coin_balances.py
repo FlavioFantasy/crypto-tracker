@@ -25,6 +25,20 @@ def coinbal_get():
 
     balances = []
 
+    # add last coin balance, if the 1st day to elaborate has no tx
+    if len(coin_bals) > 0:
+        last_bal_list = db_get_coin_balances(date=coin_bals[-1]["date"])
+        # print("last_bal_list", last_bal_list)
+        last_bal = {
+            "date": last_bal_list[0]["date"],
+            "coins": [{
+                "coin_id": i["coin_id"],
+                "amount": i["amount"]
+            } for i in last_bal_list]
+        }
+        print("last_bal", last_bal)
+        balances.append(last_bal)
+
     # calculate balances for the dates i need
     for date in todo_dates:
         date_bal = {

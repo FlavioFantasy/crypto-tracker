@@ -1,3 +1,5 @@
-[INFO] 2021/11/07 - 22:13:37 - coinbal_update: no update were made
-[INFO] 2021/11/07 - 22:13:37 - prices_update: no update were made
-[INFO] 2021/11/07 - 22:13:37 - tot_balances_update: no update were made
+[INFO] 2021/11/07 - 22:30:37 - coinbal_update: no update were made 
+[INFO] 2021/11/07 - 22:30:37 - prices_update: no update were made 
+[INFO] 2021/11/07 - 22:30:37 - tot_balances_update: no update were made 
+[INFO] 2021/11/07 - 22:30:39 - graph_drawer: sent image 
+[INFO] 2021/11/10 - 09:50:40 - coinbal_update: saved 3 coin balances on db (from 2021-11-07 to 2021-11-09) 
