@@ -54,7 +54,7 @@ def tot_balances_update():
     if len(tot_balances) > 0:
         tot_balances_save_on_db(tot_balances)
         str_to_show = f"tot_balances_update: saved {len(tot_balances)} tot_bal on db (from {tot_balances[0]['date']} to {tot_balances[-1]['date']})"
-        str_to_send = f"Balance updated on {tot_balances[-1]['date']} : {tot_balances[-1]['eur_amount']} €"
+        str_to_send = f"Balance updated on {tot_balances[-1]['date']} : {round(tot_balances[-1]['eur_amount'], 2)} €"
     else:
         str_to_show = "tot_balances_update: no update were made"
         str_to_send = f"No balances were added"

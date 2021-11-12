@@ -8,3 +8,7 @@
 [INFO] 2021/11/12 - 12:45:02 - prices_update: saved 15 prices on db (from 2021-11-07 to 2021-11-11) 
 [INFO] 2021/11/12 - 12:45:02 - tot_balances_update: saved 5 tot_bal on db (from 2021-11-07 to 2021-11-11) 
 [INFO] 2021/11/12 - 12:45:11 - graph_drawer: sent image 
+[INFO] 2021/11/12 - 12:47:14 - coinbal_update: no update were made 
+[INFO] 2021/11/12 - 12:47:14 - prices_update: no update were made 
+[INFO] 2021/11/12 - 12:47:14 - tot_balances_update: saved 1 tot_bal on db (from 2021-11-11 to 2021-11-11) 
+[INFO] 2021/11/12 - 12:47:17 - graph_drawer: sent image 
