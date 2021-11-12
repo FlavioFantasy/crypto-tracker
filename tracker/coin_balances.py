@@ -81,7 +81,11 @@ def coinbal_get():
         # append to all
         # print(date_bal)
         balances.append(date_bal)
-
+    print("len bal: ", len(balances))
+    # remove first if date already in db
+    if len(db_get_coin_balances(date=coin_bals[-1]["date"])) > 0:
+        balances.pop(0)
+    print("len bal: ", len(balances))
     for b in balances:
         print(f"bal: {b}")
     return balances
