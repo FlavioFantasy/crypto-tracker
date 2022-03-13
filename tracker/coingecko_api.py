@@ -1,4 +1,3 @@
-
 # https://www.coingecko.com/en/api/documentation
 # NOTE: max 50 requests per minute
 from typing import List
@@ -19,7 +18,7 @@ def cg_get_prices_by_date(coins: List[dict], date: str):
     """
 
     # change date format from YYYY-MM-DD to DD-MM-YYYY
-    date_rev = re.sub(r'(\d{4})-(\d{1,2})-(\d{1,2})', '\\3-\\2-\\1', date)
+    date_rev = re.sub(r"(\d{4})-(\d{1,2})-(\d{1,2})", "\\3-\\2-\\1", date)
 
     cg = CoinGeckoAPI()
 
@@ -36,12 +35,14 @@ def cg_get_prices_by_date(coins: List[dict], date: str):
         coin_eur = round(coin_history["market_data"]["current_price"]["eur"], 2)
 
         # add crypto data to add to db
-        crypto_data.append({
-            "date": date,
-            "coin_id": coin["id"],
-            "coin_usd": coin_usd,
-            "coin_eur": coin_eur
-        })
+        crypto_data.append(
+            {
+                "date": date,
+                "coin_id": coin["id"],
+                "coin_usd": coin_usd,
+                "coin_eur": coin_eur,
+            }
+        )
 
         # global num_calls
         # num_calls += 1
@@ -50,20 +51,16 @@ def cg_get_prices_by_date(coins: List[dict], date: str):
     return crypto_data
 
 
-# if __name__ == '__main__':
+# if __name__ == "__main__":
 #     pass
 #     coins = [
 #         {
-#             "id": 1,
-#             "symbol": "BTC",
-#             "name": "Bitcoin",
-#             "coingecko_id": "bitcoin"
+#             "id": 3,
+#             "symbol": "BETH",
+#             "name": "BinanceETH",
+#             "coingecko_id": "binance-eth",
 #         },
-#         {
-#             "id": 2,
-#             "symbol": "ETH",
-#             "name": "Ethereum",
-#             "coingecko_id": "ethereum"
-#         }
+#         {"id": 2, "symbol": "ETH", "name": "Ethereum", "coingecko_id": "ethereum"},
 #     ]
 #     x = cg_get_prices_by_date(coins, "01-11-2021")
+#     print(x)
