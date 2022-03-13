@@ -2,7 +2,7 @@
 a tracker for crypto portfolio
 
 ### Setup env
-```
+```bash
 $ python3 -m venv venv
 
     linux: source venv/bin/activate
@@ -10,6 +10,8 @@ $ python3 -m venv venv
 
 $ pip install -r requirements.txt
 $ pip install -e .
+
+cp config.ini.template config.ini
 
 $ tracker setup_all # create db and tables
 ```
@@ -39,7 +41,7 @@ Commands:
 ```
 
 ## Examples
-```
+```bash
 # add the coin you are interested in
 $ tracker add_coin BTC Bitcoin bitcoin
 

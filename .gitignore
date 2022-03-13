@@ -133,3 +133,4 @@ config.ini
 tracker/db/my_db.db
 tracker/db/log.txt
 tracker/images/
+.idea
