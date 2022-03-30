@@ -57,16 +57,21 @@ def get_day_details(date: str) -> str:
     last_day_amts = []
     for c in num_coins:
         eur_amt = num_coins[c] * val_coins[c]
-        last_day_amts.append({"coin_id": c, "eur_amount": eur_amt})
+        last_day_amts.append(
+            {"coin_id": c, "eur_amount": eur_amt, "coin_amount": num_coins[c]}
+        )
         tot_eur += eur_amt
 
     for c in last_day_amts:
         c["percentage"] = c["eur_amount"] / tot_eur
         c["coin_name"] = db_get_coin_symbol_by_id(c["coin_id"])
 
+    # order by relevance
+    last_day_amts = sorted(last_day_amts, key=lambda d: d["percentage"])
+
     return f"{date} asset allocation:\n" + "\n".join(
         [
-            f" - {c['coin_name']}: {round(c['eur_amount'], 2)}€ ({round(c['percentage'] * 100, 2)}%)"
+            f" - {c['coin_name']:<5}: {round(c['eur_amount'], 2):>7.2f}€ ({round(c['percentage'] * 100, 2):.2f}%)  - {c['coin_amount']}"
             for c in last_day_amts
         ]
     )
