@@ -10,9 +10,11 @@ from tracker.db_handler import *
 from tracker.coingecko_api import *
 import re
 
-def prices_get():
 
-    def elaborate_missing_prices(all_coins_: List[dict], missing_prices_: List[dict], prices_: List[dict]) -> None:
+def prices_get():
+    def elaborate_missing_prices(
+        all_coins_: List[dict], missing_prices_: List[dict], prices_: List[dict]
+    ) -> None:
         for mp_ in missing_prices_:
             coins_ = [c for c in all_coins_ if c["id"] == mp_["coin_id"]]
             date_ = mp_["date"]
@@ -71,5 +73,3 @@ def prices_update():
 
 # if __name__ == '__main__':
 #     prices_update()
-
-

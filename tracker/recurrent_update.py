@@ -1,4 +1,3 @@
-
 from tracker.coin_balances import coinbal_update
 from tracker.prices import prices_update
 from tracker.tot_balances import tot_balances_update
@@ -16,5 +15,5 @@ def recurrent_update():
     draw_and_send()
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     recurrent_update()

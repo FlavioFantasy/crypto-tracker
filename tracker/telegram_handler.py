@@ -1,4 +1,3 @@
-
 # https://rdrr.io/cran/telegram.bot/man/
 # https://github.com/python-telegram-bot/python-telegram-bot/wiki/Code-snippets#post-an-image-file-from-disk
 # https://rdrr.io/cran/telegram.bot/man/sendPhoto.html
@@ -20,6 +19,6 @@ def send_message(text: str):
 
 
 def send_image(img_path: str):
-    img = telegram.InputMediaPhoto(media=open(img_path, 'rb'))
+    img = telegram.InputMediaPhoto(media=open(img_path, "rb"))
     bot = telegram.Bot(token=bot_token)
     bot.send_media_group(chat_id=my_chatid, media=[img])

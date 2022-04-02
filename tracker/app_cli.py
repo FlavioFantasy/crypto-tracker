@@ -9,6 +9,7 @@ from tracker.recurrent_update import recurrent_update
 
 # setup -------------------------------------------------------------------------------------------
 
+
 @click.command(name="setup_all")
 def setup_all():
     """
@@ -20,7 +21,9 @@ def setup_all():
     else:
         print(f"ERROR: {res}")
 
+
 # add ---------------------------------------------------------------------------------------------
+
 
 @click.command(name="add_coin")
 @click.argument("symbol", type=str)
@@ -43,6 +46,7 @@ def add_coin(symbol: str, name: str, coingecko_id: str):
         click.echo("Coin added to the system")
     except Exception as e:
         exit_with_failure(f"ERROR: {str(e)}")
+
 
 @click.command(name="add_deposit")
 @click.argument("symbol", type=str)
@@ -71,6 +75,7 @@ def add_deposit(symbol: str, amount: float, date: str):
     except Exception as e:
         exit_with_failure(f"ERROR: {type(e).__name__} - {str(e)}")
 
+
 @click.command(name="add_withdraw")
 @click.argument("symbol", type=str)
 @click.argument("amount", type=float)
@@ -98,7 +103,9 @@ def add_withdraw(symbol: str, amount: float, date: str):
     except Exception as e:
         exit_with_failure(f"ERROR: {type(e).__name__} - {str(e)}")
 
+
 # view --------------------------------------------------------------------------------------------
+
 
 @click.command(name="list_coins")
 def list_coins():
@@ -106,12 +113,7 @@ def list_coins():
     List all coins.
     """
 
-    template = (
-        "{ID:^8}"
-        "{SYMBOL:^10}"
-        "{NAME:^15}"
-        "{COINGECKO_ID:^20}"
-    )
+    template = "{ID:^8}" "{SYMBOL:^10}" "{NAME:^15}" "{COINGECKO_ID:^20}"
     click.echo(
         "\n"
         + template.format(
@@ -134,18 +136,14 @@ def list_coins():
             )
         )
 
+
 @click.command(name="list_deposits")
 def list_deposits():
     """
     List all deposits.
     """
 
-    template = (
-        "{ID:^8}"
-        "{COIN:^10}"
-        "{AMOUNT:>12}"
-        "{DATE:^20}"
-    )
+    template = "{ID:^8}" "{COIN:^10}" "{AMOUNT:>12}" "{DATE:^20}"
     click.echo(
         "\n"
         + template.format(
@@ -169,18 +167,14 @@ def list_deposits():
             )
         )
 
+
 @click.command(name="list_withdraws")
 def list_withdraws():
     """
     List all withdraws.
     """
 
-    template = (
-        "{ID:^8}"
-        "{COIN:^10}"
-        "{AMOUNT:>12}"
-        "{DATE:^20}"
-    )
+    template = "{ID:^8}" "{COIN:^10}" "{AMOUNT:>12}" "{DATE:^20}"
     click.echo(
         "\n"
         + template.format(
@@ -204,7 +198,9 @@ def list_withdraws():
             )
         )
 
+
 # periodic updates --------------------------------------------------------------------------------
+
 
 @click.command(name="update_coin_balances")
 def update_coin_balances():

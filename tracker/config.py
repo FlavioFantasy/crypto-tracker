@@ -12,6 +12,7 @@ _TELEGRAM_CHATID = "TELEGRAM_CHATID"
 
 # ---------------------------------------------------------
 
+
 class EnvConfig:
     def __init__(self):
         self.current_conf = ConfigParser()
@@ -35,10 +36,10 @@ class EnvConfig:
 
     def get_db_file(self) -> str:
         return self.current_conf[_DEFAULT][_DB_FILE]
-    
+
     def get_telegram_token(self) -> str:
         return self.current_conf[_DEFAULT][_TELEGRAM_TOKEN]
-    
+
     def get_telegram_chat_id(self) -> str:
         return self.current_conf[_DEFAULT][_TELEGRAM_CHATID]
 

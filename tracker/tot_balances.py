@@ -67,11 +67,11 @@ def get_day_details(date: str) -> str:
         c["coin_name"] = db_get_coin_symbol_by_id(c["coin_id"])
 
     # order by relevance
-    last_day_amts = sorted(last_day_amts, key=lambda d: d["percentage"])
+    last_day_amts = sorted(last_day_amts, key=lambda d: d["percentage"], reverse=True)
 
     return f"{date} asset allocation:\n" + "\n".join(
         [
-            f" - {c['coin_name']:<5}: {round(c['eur_amount'], 2):>7.2f}€ ({round(c['percentage'] * 100, 2):.2f}%)  - {c['coin_amount']}"
+            f" - {c['coin_name']:<5}: {round(c['eur_amount'], 2):>7.2f}€ ({round(c['percentage'] * 100, 2):05.2f}%)  - {round(c['coin_amount'], 8)}"
             for c in last_day_amts
         ]
     )
@@ -96,4 +96,4 @@ def tot_balances_update():
 
 
 # if __name__ == "__main__":
-#     send_message(get_day_details("2022-03-01"))
+#     send_message(get_day_details("2022-03-31"))

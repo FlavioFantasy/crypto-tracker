@@ -16,6 +16,7 @@ def log_info(msg: str) -> None:
     with open(log_file, "a") as f:
         f.write(f"[INFO] {today_str} - {msg} \n")
 
+
 def log_error(msg: str) -> None:
 
     today_str = datetime.now().strftime("%Y/%m/%d - %H:%M:%S")
@@ -26,20 +27,17 @@ def log_error(msg: str) -> None:
 
 
 def build_error(error, env_name: str = None) -> dict:
-    return {
-        "env_name": env_name,
-        "error": error
-    }
+    return {"env_name": env_name, "error": error}
+
 
 def build_result(res, env_name: str = None) -> dict:
-    return {
-        "env_name": env_name,
-        "res": res
-    }
+    return {"env_name": env_name, "res": res}
+
 
 def exit_with_failure(msg: str, new_line: bool = True) -> None:
     click.echo(click.style(msg, fg="red"), nl=new_line)
     sys.exit(1)
+
 
 def valid_date(date: str) -> bool:
     return re.fullmatch("[0-9]{4}-([01])[0-9]-[0-3][0-9]", date) is not None

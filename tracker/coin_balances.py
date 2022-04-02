@@ -3,7 +3,11 @@ from datetime import datetime, timedelta
 from typing import List
 
 from tracker import utils
-from tracker.db_handler import db_get_all_transactions, db_add_coin_balance, db_get_coin_balances
+from tracker.db_handler import (
+    db_get_all_transactions,
+    db_add_coin_balance,
+    db_get_coin_balances,
+)
 
 
 def coinbal_get():
@@ -15,7 +19,10 @@ def coinbal_get():
     start_date = datetime.strptime(start_date_str, "%Y-%m-%d").date()
     today = datetime.today().date()
 
-    all_dates = [(start_date + timedelta(days=x)).strftime("%Y-%m-%d") for x in range((today - start_date).days)]
+    all_dates = [
+        (start_date + timedelta(days=x)).strftime("%Y-%m-%d")
+        for x in range((today - start_date).days)
+    ]
 
     coin_bals = db_get_coin_balances()
     done_dates = [b["date"] for b in coin_bals]
@@ -31,19 +38,16 @@ def coinbal_get():
         # print("last_bal_list", last_bal_list)
         last_bal = {
             "date": last_bal_list[0]["date"],
-            "coins": [{
-                "coin_id": i["coin_id"],
-                "amount": i["amount"]
-            } for i in last_bal_list]
+            "coins": [
+                {"coin_id": i["coin_id"], "amount": i["amount"]} for i in last_bal_list
+            ],
         }
         print("last_bal", last_bal)
         balances.append(last_bal)
 
     # calculate balances for the dates i need
     for date in todo_dates:
-        date_bal = {
-            "date": date
-        }
+        date_bal = {"date": date}
 
         to_remove = []
 
@@ -55,13 +59,12 @@ def coinbal_get():
 
             # add if coin not in list
             if t["coin_id"] not in [c["coin_id"] for c in date_coins]:
-                date_coins.append({
-                    "coin_id": t["coin_id"],
-                    "amount": 0
-                })
+                date_coins.append({"coin_id": t["coin_id"], "amount": 0})
 
             # get coin ref
-            coin_ref = next((item for item in date_coins if item["coin_id"] == t["coin_id"]), None)
+            coin_ref = next(
+                (item for item in date_coins if item["coin_id"] == t["coin_id"]), None
+            )
 
             # in or out
             if t["action"] == "in":

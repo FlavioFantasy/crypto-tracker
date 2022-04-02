@@ -1,4 +1,3 @@
-
 # https://plotly.com/python/line-and-scatter/
 
 import plotly.express as px
@@ -8,6 +7,7 @@ from datetime import datetime
 from tracker.db_handler import db_get_tot_balances
 from tracker.telegram_handler import send_image
 from tracker.utils import log_info
+
 
 def draw_and_send():
     all_balances = db_get_tot_balances()
