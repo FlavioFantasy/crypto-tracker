@@ -2,7 +2,6 @@ import re
 import sys
 from datetime import datetime
 
-
 import click
 
 from tracker.config import CurrentConf

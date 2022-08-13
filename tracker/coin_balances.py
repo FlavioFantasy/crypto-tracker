@@ -2,8 +2,8 @@ import copy
 from datetime import datetime, timedelta
 from typing import List
 
-from tracker import utils
 from tracker import db
+from tracker import utils
 
 
 def coinbal_get():

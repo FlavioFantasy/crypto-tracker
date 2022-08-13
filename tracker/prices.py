@@ -2,8 +2,8 @@ import time
 
 import requests
 
-from tracker import utils
 from tracker import db
+from tracker import utils
 from tracker.coingecko_api import *
 
 

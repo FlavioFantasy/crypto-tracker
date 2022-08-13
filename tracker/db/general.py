@@ -3,6 +3,7 @@ from sqlite3 import Connection
 from typing import Dict, List, Tuple
 
 from tracker.config import CurrentConf
+from tracker.utils import get_exception_str
 
 
 def tuple_rows_to_dict(rows: List[Tuple]) -> List[Dict]:
@@ -104,4 +105,4 @@ def db_create_tables() -> Tuple[bool, str]:
         return True, "ok"
 
     except Exception as e:
-        return False, f"{type(e).__name__} - {e}"
+        return False, get_exception_str(e)

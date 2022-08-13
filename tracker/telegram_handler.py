@@ -3,8 +3,8 @@
 # https://rdrr.io/cran/telegram.bot/man/sendPhoto.html
 
 import telegram
-from tracker.config import CurrentConf
 
+from tracker.config import CurrentConf
 
 bot_token = CurrentConf.get().get_telegram_token()
 my_chatid = CurrentConf.get().get_telegram_chat_id()

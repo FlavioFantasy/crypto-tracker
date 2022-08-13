@@ -1,3 +1,5 @@
+import click
+
 from .app_cli import (
     setup_all_cmd,
     coin_cmd,
@@ -8,7 +10,6 @@ from .app_cli import (
     update_tot_balances,
     update_all,
 )
-import click
 
 
 @click.group()

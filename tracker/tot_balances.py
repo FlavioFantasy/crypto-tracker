@@ -1,11 +1,10 @@
+import itertools
+import operator
 from typing import List
 
-from tracker import utils
 from tracker import db
+from tracker import utils
 from tracker.telegram_handler import send_message
-
-import operator
-import itertools
 
 
 def tot_balances_get():

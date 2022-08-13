@@ -1,12 +1,11 @@
 import click
 
-from tracker.coin_balances import coinbal_update
-
 from tracker import db
+from tracker.coin_balances import coinbal_update
 from tracker.prices import prices_update
+from tracker.recurrent_update import recurrent_update
 from tracker.tot_balances import tot_balances_update
 from tracker.utils import exit_with_failure, valid_date, get_exception_str
-from tracker.recurrent_update import recurrent_update
 
 
 def _template_to_title(template) -> str:
