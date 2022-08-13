@@ -15,7 +15,7 @@ def draw_and_send(
     start_date: Optional[Union[str, date]] = None,
     end_date: Optional[Union[str, date]] = None,
 ):
-    all_balances = db.balance.db_get_tot_balances(None, start_date, end_date)
+    all_balances = db.balance.get_tot_balances(None, start_date, end_date)
     all_balances_df = pd.DataFrame(all_balances)
 
     fig = px.line(all_balances_df, x="date", y="eur_amount", title="Crypto portfolio")

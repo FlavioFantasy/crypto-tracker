@@ -9,7 +9,7 @@ from tracker.telegram_handler import send_message
 
 def tot_balances_get():
 
-    missing_tot_bals = db.balance.db_get_missing_tot_balances()
+    missing_tot_bals = db.balance.get_missing_tot_balances()
 
     # group missing total balances by date
     grouped_missing = []
@@ -39,14 +39,12 @@ def tot_balances_get():
 
 def tot_balances_save_on_db(tot_balances: List[dict]):
     for b in tot_balances:
-        db.balance.db_add_tot_balance(b["date"], b["eur_amount"], b["usd_amount"])
+        db.balance.add_tot_balance(b["date"], b["eur_amount"], b["usd_amount"])
 
 
 def get_day_details(date: str) -> str:
     # details
-    num_coins = {
-        c["coin_id"]: c["amount"] for c in db.balance.db_get_coin_balances(date)
-    }
+    num_coins = {c["coin_id"]: c["amount"] for c in db.balance.get_coin_balances(date)}
     val_coins = {c["coin_id"]: c["coin_eur"] for c in db.price.db_get_prices(date)}
 
     tot_eur = 0

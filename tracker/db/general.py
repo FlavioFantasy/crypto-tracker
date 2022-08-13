@@ -23,85 +23,88 @@ def get_conn() -> Connection:
     return conn
 
 
-def db_create_tables() -> Tuple[bool, str]:
+def create_tables() -> Tuple[bool, str]:
+    """Create all tables needed to use the app"""
+
+    sql_create_coins = """
+        CREATE TABLE coins (
+            id INTEGER PRIMARY KEY,
+            symbol TEXT NOT NULL UNIQUE,
+            name TEXT NOT NULL,
+            coingecko_id TEXT NOT NULL
+        )
+    """
+    sql_create_deposits = """
+        CREATE TABLE deposits (
+            id INTEGER PRIMARY KEY,
+            coin_id INTEGER NOT NULL,
+            amount NUMERIC NOT NULL,
+            date DATE NOT NULL,
+
+            FOREIGN KEY (coin_id)
+                REFERENCES coins (id)
+        )
+    """
+    sql_create_withdraws = """
+        CREATE TABLE withdraws (
+            id INTEGER PRIMARY KEY,
+            coin_id INTEGER NOT NULL,
+            amount NUMERIC NOT NULL,
+            date DATE NOT NULL,
+
+            FOREIGN KEY (coin_id)
+                REFERENCES coins (id)
+        )
+    """
+    sql_create_prices = """
+        CREATE TABLE prices (
+            date DATE NOT NULL,
+            coin_id INTEGER NOT NULL,
+            coin_usd NUMERIC NOT NULL,
+            coin_eur NUMERIC NOT NULL,
+
+            PRIMARY KEY (date, coin_id),
+            FOREIGN KEY (coin_id)
+                REFERENCES coins (id)
+        )
+    """
+    sql_create_coin_balance = """
+        CREATE TABLE coin_balances (
+            date DATE NOT NULL,
+            coin_id INTEGER NOT NULL,
+            amount NUMERIC NOT NULL,
+
+            PRIMARY KEY (date, coin_id),
+            FOREIGN KEY (coin_id)
+                REFERENCES coins (id)
+        )
+    """
+    sql_create_tot_balances = """
+        CREATE TABLE tot_balances (
+            date DATE NOT NULL PRIMARY KEY,
+            eur_amount NUMERIC NOT NULL,
+            usd_amount NUMERIC NOT NULL
+        )
+    """
+
     try:
         conn = get_conn()
         curr = conn.cursor()
 
-        sql_create = """
-            CREATE TABLE coins (
-                id INTEGER PRIMARY KEY,
-                symbol TEXT NOT NULL UNIQUE,
-                name TEXT NOT NULL,
-                coingecko_id TEXT NOT NULL
-            )
-        """
-        curr.execute(sql_create)
+        # create all tables
+        curr.execute(sql_create_coins)
 
-        sql_create = """
-            CREATE TABLE prices (
-                date DATE NOT NULL,
-                coin_id INTEGER NOT NULL,
-                coin_usd NUMERIC NOT NULL,
-                coin_eur NUMERIC NOT NULL,
+        curr.execute(sql_create_deposits)
+        curr.execute(sql_create_withdraws)
 
-                PRIMARY KEY (date, coin_id),
-                FOREIGN KEY (coin_id)
-                    REFERENCES coins (id)
-            )
-        """
-        curr.execute(sql_create)
+        curr.execute(sql_create_prices)
 
-        sql_create = """
-            CREATE TABLE coin_balances (
-                date DATE NOT NULL,
-                coin_id INTEGER NOT NULL,
-                amount NUMERIC NOT NULL,
-
-                PRIMARY KEY (date, coin_id),
-                FOREIGN KEY (coin_id)
-                    REFERENCES coins (id)
-            )
-        """
-        curr.execute(sql_create)
-
-        sql_create = """
-            CREATE TABLE deposits (
-                id INTEGER PRIMARY KEY,
-                coin_id INTEGER NOT NULL,
-                amount NUMERIC NOT NULL,
-                date DATE NOT NULL,
-
-                FOREIGN KEY (coin_id)
-                    REFERENCES coins (id)
-            )
-        """
-        curr.execute(sql_create)
-
-        sql_create = """
-            CREATE TABLE withdraws (
-                id INTEGER PRIMARY KEY,
-                coin_id INTEGER NOT NULL,
-                amount NUMERIC NOT NULL,
-                date DATE NOT NULL,
-
-                FOREIGN KEY (coin_id)
-                    REFERENCES coins (id)
-            )
-        """
-        curr.execute(sql_create)
-
-        sql_create = """
-            CREATE TABLE tot_balances (
-                date DATE NOT NULL PRIMARY KEY,
-                eur_amount NUMERIC NOT NULL,
-                usd_amount NUMERIC NOT NULL
-            )
-        """
-        curr.execute(sql_create)
+        curr.execute(sql_create_coin_balance)
+        curr.execute(sql_create_tot_balances)
 
         conn.commit()
         conn.close()
+
         return True, "ok"
 
     except Exception as e:

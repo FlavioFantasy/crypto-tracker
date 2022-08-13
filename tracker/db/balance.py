@@ -1,10 +1,13 @@
 from datetime import date
-from typing import Optional, Union
+from typing import Optional, Union, List
 
 from tracker.db.general import get_conn, tuple_rows_to_dict
 
 
-def db_get_coin_balances(date: str = None):
+# region coin-balances
+
+
+def get_coin_balances(date_: Optional[Union[str, date]] = None) -> List[dict]:
     conn = get_conn()
     curr = conn.cursor()
 
@@ -13,20 +16,71 @@ def db_get_coin_balances(date: str = None):
         FROM coin_balances
         {}
     """
-    where_clause = f"WHERE date='{date}'" if date else ""
+    where_clause = f"WHERE date='{date_}'" if date_ else ""
+    sql_select = sql_select.format(where_clause)
 
-    curr.execute(sql_select.format(where_clause))
+    curr.execute(sql_select)
     res = curr.fetchall()
 
     conn.close()
+
     return tuple_rows_to_dict(res)
 
 
-def db_get_tot_balances(
+def add_coin_balance(date_: Union[str, date], coin_id: int, amount: float) -> None:
+    conn = get_conn()
+    curr = conn.cursor()
+
+    sql_insert = """
+        INSERT INTO coin_balances (date, coin_id, amount)
+        VALUES (?, ?, ?)
+    """
+    curr.execute(
+        sql_insert,
+        (
+            date_,
+            coin_id,
+            amount,
+        ),
+    )
+
+    conn.commit()
+    conn.close()
+
+
+def get_last_coin_balances() -> List[dict]:
+    conn = get_conn()
+    curr = conn.cursor()
+
+    sql_select = """
+        SELECT * 
+        FROM coin_balances
+        WHERE date = (
+            SELECT date
+            FROM coin_balances
+            ORDER BY date DESC 
+            LIMIT 1
+        )
+    """
+
+    curr.execute(sql_select)
+    res = curr.fetchall()
+
+    conn.close()
+
+    return tuple_rows_to_dict(res)
+
+
+# endregion
+
+# region tot-balances (eur)
+
+
+def get_tot_balances(
     date_: Optional[Union[str, date]] = None,
     start_date: Optional[Union[str, date]] = None,
     end_date: Optional[Union[str, date]] = None,
-):
+) -> List[dict]:
     conn = get_conn()
     curr = conn.cursor()
 
@@ -56,7 +110,7 @@ def db_get_tot_balances(
     return tuple_rows_to_dict(res)
 
 
-def db_get_missing_tot_balances():
+def get_missing_tot_balances() -> List[dict]:
     conn = get_conn()
     curr = conn.cursor()
 
@@ -79,28 +133,9 @@ def db_get_missing_tot_balances():
     return tuple_rows_to_dict(res)
 
 
-def db_add_coin_balance(date: str, coin_id: int, amount: float):
-    conn = get_conn()
-    curr = conn.cursor()
-
-    sql_insert = """
-        INSERT INTO coin_balances (date, coin_id, amount)
-        VALUES (?, ?, ?)
-    """
-    curr.execute(
-        sql_insert,
-        (
-            date,
-            coin_id,
-            amount,
-        ),
-    )
-
-    conn.commit()
-    conn.close()
-
-
-def db_add_tot_balance(date: str, eur_amount: float, usd_amount: float):
+def add_tot_balance(
+    date_: Union[str, date], eur_amount: float, usd_amount: float
+) -> None:
     conn = get_conn()
     curr = conn.cursor()
 
@@ -111,7 +146,7 @@ def db_add_tot_balance(date: str, eur_amount: float, usd_amount: float):
     curr.execute(
         sql_insert,
         (
-            date,
+            date_,
             eur_amount,
             usd_amount,
         ),
@@ -119,3 +154,6 @@ def db_add_tot_balance(date: str, eur_amount: float, usd_amount: float):
 
     conn.commit()
     conn.close()
+
+
+# endregion
