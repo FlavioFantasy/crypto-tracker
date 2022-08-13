@@ -130,7 +130,7 @@ dmypy.json
 
 # my files (flavio's)
 config.ini
-tracker/db/my_db.db
-tracker/db/log.txt
+tracker/db_files/my_db.db
+tracker/db_files/log.txt
 tracker/images/
 .idea

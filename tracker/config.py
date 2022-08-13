@@ -53,10 +53,9 @@ class CurrentConf:
 
     @staticmethod
     def get() -> EnvConfig:
-        if CurrentConf.__current_conf is None:
+        if not CurrentConf.__current_conf:
             CurrentConf.__current_conf = EnvConfig()
-
         return CurrentConf.__current_conf
 
     def __init__(self):
-        raise RuntimeError("init not enabled")  # pragma: no cover
+        raise RuntimeError("__init__ method not enabled")

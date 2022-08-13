@@ -1,8 +1,8 @@
 [DEFAULT]
 
 # location of files
-LOG_FILE = tracker\db\log.txt
-DB_FILE = tracker\db\my_db.db
+LOG_FILE = tracker\db_files\log.txt
+DB_FILE = tracker\db_files\my_db.db
 
 # telegram data
 # token of bot (send messages)
