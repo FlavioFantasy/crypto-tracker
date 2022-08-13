@@ -3,7 +3,7 @@ from typing import Optional, List
 from tracker.db.general import get_conn, tuple_rows_to_dict
 
 
-def db_get_coin_id_by_symbol(symbol: str) -> Optional[int]:
+def get_id_by_symbol(symbol: str) -> Optional[int]:
     conn = get_conn()
     curr = conn.cursor()
 
@@ -13,15 +13,17 @@ def db_get_coin_id_by_symbol(symbol: str) -> Optional[int]:
         {}
     """
     where_clause = f"WHERE symbol='{symbol}'"
+    sql_select = sql_select.format(where_clause)
 
-    curr.execute(sql_select.format(where_clause))
+    curr.execute(sql_select)
     res = curr.fetchone()
 
     conn.close()
+
     return res["id"] if res else None
 
 
-def db_get_coin_symbol_by_id(coin_id: int) -> Optional[str]:
+def get_symbol_by_id(coin_id: int) -> Optional[str]:
     conn = get_conn()
     curr = conn.cursor()
 
@@ -36,10 +38,11 @@ def db_get_coin_symbol_by_id(coin_id: int) -> Optional[str]:
     res = curr.fetchone()
 
     conn.close()
+
     return res["symbol"] if res else None
 
 
-def db_get_coins() -> List[dict]:
+def select() -> List[dict]:
     conn = get_conn()
     curr = conn.cursor()
 
@@ -52,10 +55,11 @@ def db_get_coins() -> List[dict]:
     res = curr.fetchall()
 
     conn.close()
+
     return tuple_rows_to_dict(res)
 
 
-def db_add_coin(symbol: str, name: str, coingecko_id: str):
+def add(symbol: str, name: str, coingecko_id: str):
     conn = get_conn()
     curr = conn.cursor()
 
@@ -63,14 +67,9 @@ def db_add_coin(symbol: str, name: str, coingecko_id: str):
         INSERT INTO coins (symbol, name, coingecko_id)
         VALUES (?, ?, ?)
     """
-    curr.execute(
-        sql_insert,
-        (
-            symbol,
-            name,
-            coingecko_id,
-        ),
-    )
+
+    insert_params = [symbol, name, coingecko_id]
+    curr.execute(sql_insert, insert_params)
 
     conn.commit()
     conn.close()

@@ -35,16 +35,11 @@ def add_coin_balance(date_: Union[str, date], coin_id: int, amount: float) -> No
         INSERT INTO coin_balances (date, coin_id, amount)
         VALUES (?, ?, ?)
     """
-    curr.execute(
-        sql_insert,
-        (
-            date_,
-            coin_id,
-            amount,
-        ),
-    )
+    insert_params = [date_, coin_id, amount]
 
+    curr.execute(sql_insert, insert_params)
     conn.commit()
+
     conn.close()
 
 
@@ -107,6 +102,7 @@ def get_tot_balances(
     res = curr.fetchall()
 
     conn.close()
+
     return tuple_rows_to_dict(res)
 
 
@@ -130,6 +126,7 @@ def get_missing_tot_balances() -> List[dict]:
     res = curr.fetchall()
 
     conn.close()
+
     return tuple_rows_to_dict(res)
 
 
@@ -143,14 +140,9 @@ def add_tot_balance(
         INSERT INTO tot_balances (date, eur_amount, usd_amount)
         VALUES (?, ?, ?)
     """
-    curr.execute(
-        sql_insert,
-        (
-            date_,
-            eur_amount,
-            usd_amount,
-        ),
-    )
+
+    insert_params = [date_, eur_amount, usd_amount]
+    curr.execute(sql_insert, insert_params)
 
     conn.commit()
     conn.close()

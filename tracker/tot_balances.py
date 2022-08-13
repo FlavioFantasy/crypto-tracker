@@ -58,7 +58,7 @@ def get_day_details(date: str) -> str:
 
     for c in last_day_amts:
         c["percentage"] = c["eur_amount"] / tot_eur
-        c["coin_name"] = db.coin.db_get_coin_symbol_by_id(c["coin_id"])
+        c["coin_name"] = db.coin.get_symbol_by_id(c["coin_id"])
 
     # order by relevance
     last_day_amts = sorted(last_day_amts, key=lambda d: d["percentage"], reverse=True)

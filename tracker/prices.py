@@ -22,7 +22,7 @@ def prices_get():
     # find which data are missing from the prices table, based on date and coin present in coin_balances
     missing_prices = db.price.db_get_missing_prices()
     # print(f"missing_prices: {missing_prices}")
-    all_coins = db.coin.db_get_coins()
+    all_coins = db.coin.select()
 
     prices = []
     num_done = 0

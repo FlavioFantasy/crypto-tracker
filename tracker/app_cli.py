@@ -52,7 +52,7 @@ def coin_add_cmd(symbol: str, name: str, coingecko_id: str):
         exit_with_failure("Invalid input")
 
     try:
-        db.coin.db_add_coin(symbol, name, coingecko_id)
+        db.coin.add(symbol, name, coingecko_id)
         click.echo("Coin added to the system")
     except Exception as e:
         exit_with_failure(f"ERROR: {get_exception_str(e)}")
@@ -64,7 +64,7 @@ def coin_list_cmd():
     List all coins.
     """
 
-    coins = db.coin.db_get_coins()
+    coins = db.coin.select()
 
     template = "{ID:^8}" "{SYMBOL:^10}" "{NAME:^15}" "{COINGECKO_ID:^20}"
     click.echo("\n" + _template_to_title(template))
@@ -106,7 +106,7 @@ def deposit_add_cmd(symbol: str, amount: float, date: str):
     if len(symbol) == 0 or amount < 0 or not valid_date(date):
         exit_with_failure("Invalid input")
 
-    coin_id = db.coin.db_get_coin_id_by_symbol(symbol)
+    coin_id = db.coin.get_id_by_symbol(symbol)
     assert coin_id, "Invalid coin"
 
     try:
@@ -128,7 +128,7 @@ def deposit_list_cmd():
     template = "{ID:^8}" "{COIN:^10}" "{AMOUNT:>12}" "{DATE:^20}"
     click.echo("\n" + _template_to_title(template))
     for d in deposits:
-        coin_symbol = db.coin.db_get_coin_symbol_by_id(d["coin_id"])
+        coin_symbol = db.coin.get_symbol_by_id(d["coin_id"])
         click.echo(
             template.format(
                 ID=f"{d['id']}",
@@ -166,7 +166,7 @@ def withdrawal_add_cmd(symbol: str, amount: float, date: str):
     if len(symbol) == 0 or amount < 0 or not valid_date(date):
         exit_with_failure("Invalid input")
 
-    coin_id = db.coin.db_get_coin_id_by_symbol(symbol)
+    coin_id = db.coin.get_id_by_symbol(symbol)
     assert coin_id, "Invalid coin"
 
     try:
@@ -188,7 +188,7 @@ def withdrawal_list_cmd():
     template = "{ID:^8}" "{COIN:^10}" "{AMOUNT:>12}" "{DATE:^20}"
     click.echo("\n" + _template_to_title(template))
     for w in withdraws:
-        coin_symbol = db.coin.db_get_coin_symbol_by_id(w["coin_id"])
+        coin_symbol = db.coin.get_symbol_by_id(w["coin_id"])
         click.echo(
             template.format(
                 ID=f"{w['id']}",
@@ -261,7 +261,7 @@ def balance_list_cmd():
         click.echo(
             template.format(
                 DATE=str(cb["date"]),
-                COIN=db.coin.db_get_coin_symbol_by_id(cb["coin_id"]),
+                COIN=db.coin.get_symbol_by_id(cb["coin_id"]),
                 AMOUNT=cb["amount"],
             )
         )
