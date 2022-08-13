@@ -41,7 +41,8 @@ def prices_get():
             num_done = len(prices)
 
         # exceded 50 reqs in a minute
-        except requests.exceptions.HTTPError:
+        except (requests.exceptions.HTTPError, ValueError) as e:
+            print(f"caught {e} ...")
             num_done = len(prices)
             print(f" > Done {num_done} out of {num_tot}, waiting 62 secs ...")
             time.sleep(62)

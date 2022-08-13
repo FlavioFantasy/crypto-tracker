@@ -1,5 +1,6 @@
 import sqlite3
-from typing import Dict, List, Tuple
+from datetime import date
+from typing import Dict, List, Tuple, Optional, Union, Any
 import os
 
 from tracker.config import CurrentConf
@@ -239,7 +240,11 @@ def db_get_coin_balances(date: str = None):
     return tuple_rows_to_dict(res)
 
 
-def db_get_tot_balances(date: str = None):
+def db_get_tot_balances(
+    date_: Optional[Union[str, date]] = None,
+    start_date: Optional[date] = None,
+    end_date: Optional[date] = None,
+):
     conn = get_conn()
     curr = conn.cursor()
 
@@ -248,9 +253,21 @@ def db_get_tot_balances(date: str = None):
         FROM tot_balances
         {}
     """
-    where_clause = f"WHERE date='{date}'" if date else ""
 
-    curr.execute(sql_select.format(where_clause))
+    where_clause = ""
+    if date_:
+        where_clause += " WHERE " if not where_clause else " AND "
+        where_clause += f"date = '{date_}'"
+    if start_date:
+        where_clause += " WHERE " if not where_clause else " AND "
+        where_clause += f"date >= '{start_date}'"
+    if end_date:
+        where_clause += " WHERE " if not where_clause else " AND "
+        where_clause += f"date <= '{end_date}'"
+
+    sql_select = sql_select.format(where_clause)
+
+    curr.execute(sql_select)
     res = curr.fetchall()
 
     conn.close()
