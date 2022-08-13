@@ -17,7 +17,7 @@ def tuple_rows_to_dict(rows: List[Tuple]) -> List[Dict]:
 def get_conn() -> Connection:
     db_file = CurrentConf.get().get_db_file()
 
-    conn = sqlite3.connect(db_file)
+    conn = sqlite3.connect(db_file, detect_types=sqlite3.PARSE_DECLTYPES)
     conn.row_factory = sqlite3.Row
 
     return conn

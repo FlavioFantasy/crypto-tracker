@@ -23,7 +23,7 @@ def balance_list_cmd():
     for cb in coin_balances:
         click.echo(
             template.format(
-                DATE=cb["date"],
+                DATE=str(cb["date"]),
                 COIN=db.coin.get_symbol_by_id(cb["coin_id"]),
                 AMOUNT=round(cb["amount"], 8),
             )
