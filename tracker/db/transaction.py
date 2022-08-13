@@ -1,7 +1,9 @@
+from typing import List
+
 from tracker.db.general import get_conn, tuple_rows_to_dict
 
 
-def db_get_deposits(date: str = None):
+def select_deposits(date: str = None) -> List[dict]:
     conn = get_conn()
     curr = conn.cursor()
 
@@ -20,7 +22,7 @@ def db_get_deposits(date: str = None):
     return tuple_rows_to_dict(res)
 
 
-def db_add_deposit(coin_id: int, amount: float, date: str):
+def add_deposit(coin_id: int, amount: float, date: str) -> None:
     conn = get_conn()
     curr = conn.cursor()
 
@@ -28,20 +30,14 @@ def db_add_deposit(coin_id: int, amount: float, date: str):
         INSERT INTO deposits (coin_id, amount, date)
         VALUES (?, ?, ?)
     """
-    curr.execute(
-        sql_insert,
-        (
-            coin_id,
-            amount,
-            date,
-        ),
-    )
+    insert_params = [coin_id, amount, date]
+    curr.execute(sql_insert, insert_params)
 
     conn.commit()
     conn.close()
 
 
-def db_get_withdraws(date: str = None):
+def select_withdrawals(date: str = None) -> List[dict]:
     conn = get_conn()
     curr = conn.cursor()
 
@@ -60,7 +56,7 @@ def db_get_withdraws(date: str = None):
     return tuple_rows_to_dict(res)
 
 
-def db_add_withdraws(coin_id: int, amount: float, date: str):
+def add_withdrawal(coin_id: int, amount: float, date: str) -> None:
     conn = get_conn()
     curr = conn.cursor()
 
@@ -68,26 +64,20 @@ def db_add_withdraws(coin_id: int, amount: float, date: str):
         INSERT INTO withdraws (coin_id, amount, date)
         VALUES (?, ?, ?)
     """
-    curr.execute(
-        sql_insert,
-        (
-            coin_id,
-            amount,
-            date,
-        ),
-    )
+    insert_params = [coin_id, amount, date]
+    curr.execute(sql_insert, insert_params)
 
     conn.commit()
     conn.close()
 
 
-def db_get_all_transactions():
+def get_all_transactions() -> List[dict]:
     # get transactions and categorize them
 
-    all_deposits = db_get_deposits()
+    all_deposits = select_deposits()
     all_deposits = [dict(d, action="in") for d in all_deposits]
 
-    all_withdraws = db_get_withdraws()
+    all_withdraws = select_withdrawals()
     all_withdraws = [dict(w, action="out") for w in all_withdraws]
 
     all_transactions = all_deposits + all_withdraws

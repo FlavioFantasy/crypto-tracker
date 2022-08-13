@@ -7,7 +7,7 @@ from tracker import utils
 
 
 def coinbal_get():
-    all_transactions = db.transaction.db_get_all_transactions()
+    all_transactions = db.transaction.get_all_transactions()
     # print(json.dumps(all_transactions, indent=2, default=str))
 
     # get all dates

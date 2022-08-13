@@ -110,7 +110,7 @@ def deposit_add_cmd(symbol: str, amount: float, date: str):
     assert coin_id, "Invalid coin"
 
     try:
-        db.transaction.db_add_deposit(coin_id, amount, date)
+        db.transaction.add_deposit(coin_id, amount, date)
         click.echo("Deposit added to the system")
 
     except Exception as e:
@@ -123,7 +123,7 @@ def deposit_list_cmd():
     List all deposits.
     """
 
-    deposits = db.transaction.db_get_deposits()
+    deposits = db.transaction.select_deposits()
 
     template = "{ID:^8}" "{COIN:^10}" "{AMOUNT:>12}" "{DATE:^20}"
     click.echo("\n" + _template_to_title(template))
@@ -170,7 +170,7 @@ def withdrawal_add_cmd(symbol: str, amount: float, date: str):
     assert coin_id, "Invalid coin"
 
     try:
-        db.transaction.db_add_withdraws(coin_id, amount, date)
+        db.transaction.add_withdrawal(coin_id, amount, date)
         click.echo("Withdraw added to the system")
 
     except Exception as e:
@@ -183,7 +183,7 @@ def withdrawal_list_cmd():
     List all withdraws.
     """
 
-    withdraws = db.transaction.db_get_withdraws()
+    withdraws = db.transaction.select_withdrawals()
 
     template = "{ID:^8}" "{COIN:^10}" "{AMOUNT:>12}" "{DATE:^20}"
     click.echo("\n" + _template_to_title(template))
