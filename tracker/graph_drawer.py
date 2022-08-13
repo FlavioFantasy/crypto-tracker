@@ -1,37 +1,48 @@
-# https://plotly.com/python/line-and-scatter/
-
 from datetime import date
+from pathlib import Path
 from typing import Optional, Union
 
 import pandas as pd  # type: ignore
 import plotly.express as px  # type: ignore
 
 from tracker import db
+from tracker.config import CurrentConf
 from tracker.telegram_handler import send_image
 from tracker.utils import log_info
+
+
+def _get_file_name() -> Path:
+    imgs_folder = CurrentConf.get().get_imgs_folder()
+
+    img_name = Path(imgs_folder, f"{date.today()}.png")
+    i = 0
+    while img_name.exists():
+        i += 1
+        img_name = Path(imgs_folder, f"{date.today()}-{i}.png")
+    return img_name
 
 
 def draw_and_send(
     start_date: Optional[Union[str, date]] = None,
     end_date: Optional[Union[str, date]] = None,
-):
-    all_balances = db.balance.get_tot_balances(None, start_date, end_date)
-    all_balances_df = pd.DataFrame(all_balances)
+) -> None:
+    """ Draw graph of eur valuation of crypto tracker and send it via Telegram """
 
-    fig = px.line(all_balances_df, x="date", y="eur_amount", title="Crypto portfolio")
-    # fig.show()
+    total_balances_df = pd.DataFrame(db.balance.get_tot_balances(None, start_date, end_date))
 
-    img_name = f"tracker/images/{date.today()}.png"
-    try:
-        fig.write_image(img_name)
-    except:
-        img_name = f"tracker/images/{date.today()}-1.png"
-        fig.write_image(img_name)
+    # https://plotly.com/python/line-and-scatter/
+    eur_graph = px.line(total_balances_df, x="date", y="eur_amount", title="Crypto portfolio")
+    # fig.show()  # to open browser with graph
 
+    img_name = _get_file_name()
+    # create img
+    eur_graph.write_image(img_name)
+
+    # send img
     send_image(img_name)
-    print("graph_drawer: sent image")
-    log_info("graph_drawer: sent image")
+
+    log_info("draw_and_send: sent image")
 
 
-# if __name__ == '__main__':
-#     draw_and_send('2022-01-01', '2022-01-15')
+# if __name__ == "__main__":
+#     draw_and_send("2022-01-01", "2022-01-15")
