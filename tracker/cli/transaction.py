@@ -58,7 +58,7 @@ def deposit_list_cmd():
         click.echo(
             template.format(
                 ID=d["id"],
-                DATE=d["date"],
+                DATE=str(d["date"]),
                 COIN=db.coin.get_symbol_by_id(d["coin_id"]),
                 AMOUNT=round(d["amount"], 8),
             )
@@ -113,7 +113,7 @@ def withdrawal_list_cmd():
         click.echo(
             template.format(
                 ID=w["id"],
-                DATE=w["date"],
+                DATE=str(w["date"]),
                 COIN=db.coin.get_symbol_by_id(w["coin_id"]),
                 AMOUNT=round(w["amount"], 8),
             )

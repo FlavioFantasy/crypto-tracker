@@ -8,6 +8,9 @@ from tracker.db.general import get_conn, tuple_rows_to_dict
 
 
 def get_coin_balances(date_: Optional[Union[str, date]] = None) -> List[dict]:
+    """
+    :return: [ {date:_, coin_id:_, amount:_}, ... ]
+    """
     conn = get_conn()
     curr = conn.cursor()
 
@@ -15,6 +18,7 @@ def get_coin_balances(date_: Optional[Union[str, date]] = None) -> List[dict]:
         SELECT *
         FROM coin_balances
         {}
+        ORDER BY date
     """
     where_clause = f"WHERE date='{date_}'" if date_ else ""
     sql_select = sql_select.format(where_clause)

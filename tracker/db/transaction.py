@@ -72,16 +72,13 @@ def add_withdrawal(coin_id: int, amount: float, date_: Union[str, date]) -> None
     conn.close()
 
 
-def get_all_transactions() -> List[dict]:
-    # get transactions and categorize them
+def get_transactions() -> List[dict]:
+    """Get transactions (deposits and withdrawals), ordered by date
 
-    all_deposits = select_deposits()
-    all_deposits = [dict(d, action="in") for d in all_deposits]
+    :return: [ {id:_, coin_id:_, amount:_, date:_, action:in/out}, ... ]
+    """
+    deposits = [{**d, "action": "in"} for d in select_deposits()]
+    withdraws = [{**w, "action": "out"} for w in select_withdrawals()]
 
-    all_withdraws = select_withdrawals()
-    all_withdraws = [dict(w, action="out") for w in all_withdraws]
-
-    all_transactions = all_deposits + all_withdraws
-    all_transactions = sorted(all_transactions, key=lambda d: d["date"])
-
-    return all_transactions
+    transactions = sorted(deposits + withdraws, key=lambda d: d["date"])
+    return transactions
