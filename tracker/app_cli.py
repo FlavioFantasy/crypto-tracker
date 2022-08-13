@@ -19,7 +19,7 @@ def setup_all_cmd():
     """
     Setup the app (create db)
     """
-    ok, res = db.general.db_create_tables()
+    ok, res = db.general.create_tables()
     if ok:
         print("DB tables created successfully")
     else:
@@ -236,3 +236,35 @@ def update_all():
     Do all updates necessary (coin_balances, prices and total_balances) and the updated graph.
     """
     recurrent_update()
+
+
+# region balance
+
+
+@click.group(name="balance")
+def balance_cmd():
+    """All regarding balances"""
+    pass
+
+
+@balance_cmd.command(name="list-last")
+def balance_list_cmd():
+    """
+    List last coin balances.
+    """
+
+    coin_balances = db.balance.get_last_coin_balances()
+
+    template = "{DATE:<16}" "{COIN:<10}" "{AMOUNT:<20}"
+    click.echo("\n" + _template_to_title(template))
+    for cb in coin_balances:
+        click.echo(
+            template.format(
+                DATE=str(cb["date"]),
+                COIN=db.coin.db_get_coin_symbol_by_id(cb["coin_id"]),
+                AMOUNT=cb["amount"],
+            )
+        )
+
+
+# endregion

@@ -1,6 +1,7 @@
 import click
 
 from .app_cli import (
+    balance_cmd,
     setup_all_cmd,
     coin_cmd,
     deposit_cmd,
@@ -25,6 +26,7 @@ crypto_tracker.add_command(setup_all_cmd)
 crypto_tracker.add_command(coin_cmd)
 crypto_tracker.add_command(deposit_cmd)
 crypto_tracker.add_command(withdrawal_cmd)
+crypto_tracker.add_command(balance_cmd)
 
 crypto_tracker.add_command(update_coin_balances)
 crypto_tracker.add_command(update_prices)
