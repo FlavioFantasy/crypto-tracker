@@ -1,10 +1,10 @@
 import click
 
 from tracker import db
-from tracker.cli.utils import _template_to_title
+from tracker.cli.utils import _template_to_title, TrackerClickGroup
 
 
-@click.group(name="balance")
+@click.group(name="balance", cls=TrackerClickGroup)
 def balance_cmd():
     """All regarding balances"""
     pass

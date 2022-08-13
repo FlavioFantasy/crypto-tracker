@@ -1,11 +1,11 @@
 import click
 
 from tracker import db
-from tracker.cli.utils import _template_to_title
+from tracker.cli.utils import _template_to_title, TrackerClickGroup
 from tracker.utils import valid_date, exit_with_failure, get_exception_str
 
 
-@click.group(name="deposit")
+@click.group(name="deposit", cls=TrackerClickGroup)
 def deposit_cmd():
     """All regarding deposits"""
     pass
@@ -60,7 +60,7 @@ def deposit_list_cmd():
         )
 
 
-@click.group(name="withdrawal")
+@click.group(name="withdrawal", cls=TrackerClickGroup)
 def withdrawal_cmd():
     """All regarding withdrawals"""
     pass

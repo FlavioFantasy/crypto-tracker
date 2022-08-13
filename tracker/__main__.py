@@ -4,9 +4,10 @@ from tracker.cli.balance import balance_cmd
 from tracker.cli.coin import coin_cmd
 from tracker.cli.misc import setup_all_cmd, update_all_cmd
 from tracker.cli.transaction import deposit_cmd, withdrawal_cmd
+from tracker.cli.utils import TrackerClickGroup
 
 
-@click.group()
+@click.group(cls=TrackerClickGroup)
 def crypto_tracker() -> None:
     """
     Set of commands to handle the db app

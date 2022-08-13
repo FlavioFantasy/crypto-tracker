@@ -1,11 +1,11 @@
 import click
 
 from tracker import db
-from tracker.cli.utils import _template_to_title
+from tracker.cli.utils import _template_to_title, TrackerClickGroup
 from tracker.utils import exit_with_failure, get_exception_str
 
 
-@click.group(name="coin")
+@click.group(name="coin", cls=TrackerClickGroup)
 def coin_cmd():
     """All regarding coins"""
     pass
