@@ -20,7 +20,7 @@ def prices_get():
             prices_ += prices_date_
 
     # find which data are missing from the prices table, based on date and coin present in coin_balances
-    missing_prices = db.price.db_get_missing_prices()
+    missing_prices = db.price.get_missing()
     # print(f"missing_prices: {missing_prices}")
     all_coins = db.coin.select()
 
@@ -53,7 +53,7 @@ def prices_get():
 
 def prices_save_on_db(prices: List[dict]):
     for p in prices:
-        db.price.db_add_price(p["date"], p["coin_id"], p["coin_usd"], p["coin_eur"])
+        db.price.add(p["date"], p["coin_id"], p["coin_usd"], p["coin_eur"])
 
 
 def prices_update():

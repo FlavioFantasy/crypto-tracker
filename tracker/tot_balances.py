@@ -45,7 +45,7 @@ def tot_balances_save_on_db(tot_balances: List[dict]):
 def get_day_details(date: str) -> str:
     # details
     num_coins = {c["coin_id"]: c["amount"] for c in db.balance.get_coin_balances(date)}
-    val_coins = {c["coin_id"]: c["coin_eur"] for c in db.price.db_get_prices(date)}
+    val_coins = {c["coin_id"]: c["coin_eur"] for c in db.price.select(date)}
 
     tot_eur = 0
     last_day_amts = []
