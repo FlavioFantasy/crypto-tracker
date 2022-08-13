@@ -1,5 +1,3 @@
-import click
-
 from .app_cli import *
 
 
@@ -11,15 +9,11 @@ def crypto_tracker() -> None:
     pass  # pragma: no cover
 
 
-crypto_tracker.add_command(setup_all)
+crypto_tracker.add_command(setup_all_cmd)
 
-crypto_tracker.add_command(add_coin)
-crypto_tracker.add_command(add_deposit)
-crypto_tracker.add_command(add_withdraw)
-
-crypto_tracker.add_command(list_coins)
-crypto_tracker.add_command(list_deposits)
-crypto_tracker.add_command(list_withdraws)
+crypto_tracker.add_command(coin_cmd)
+crypto_tracker.add_command(deposit_cmd)
+crypto_tracker.add_command(withdrawal_cmd)
 
 crypto_tracker.add_command(update_coin_balances)
 crypto_tracker.add_command(update_prices)

@@ -7,11 +7,15 @@ from tracker.tot_balances import tot_balances_update
 from tracker.utils import exit_with_failure, valid_date
 from tracker.recurrent_update import recurrent_update
 
-# setup -------------------------------------------------------------------------------------------
+
+def _template_to_title(template) -> str:
+    column_names = [s.split(":")[0] for s in template.strip("{}").split("}{")]
+    column_dict = {t: t for t in column_names}
+    return template.format(**column_dict)
 
 
 @click.command(name="setup_all")
-def setup_all():
+def setup_all_cmd():
     """
     Setup the app (create db)
     """
@@ -22,20 +26,26 @@ def setup_all():
         print(f"ERROR: {res}")
 
 
-# add ---------------------------------------------------------------------------------------------
+# region coin
 
 
-@click.command(name="add_coin")
+@click.group(name="coin")
+def coin_cmd():
+    """All regarding coins"""
+    pass
+
+
+@coin_cmd.command(name="add")
 @click.argument("symbol", type=str)
 @click.argument("name", type=str)
 @click.argument("coingecko_id", type=str)
-def add_coin(symbol: str, name: str, coingecko_id: str):
+def coin_add_cmd(symbol: str, name: str, coingecko_id: str):
     """
-    Add a coin to the db
+    Add a coin_cmd to the db
 
-    SYMBOL: coin symbol (es: BTC) \n
-    NAME: coin name (es: Bitcoin) \n
-    COINGECKO_ID: id of the coin on coingecko (es: bitcoin) \n
+    SYMBOL: coin_cmd symbol (es: BTC) \n
+    NAME: coin_cmd name (es: Bitcoin) \n
+    COINGECKO_ID: id of the coin_cmd on coingecko (es: bitcoin) \n
     """
 
     if len(symbol) == 0 or len(name) == 0 or len(coingecko_id) == 0:
@@ -48,16 +58,48 @@ def add_coin(symbol: str, name: str, coingecko_id: str):
         exit_with_failure(f"ERROR: {str(e)}")
 
 
-@click.command(name="add_deposit")
+@coin_cmd.command(name="list")
+def coin_list_cmd():
+    """
+    List all coins.
+    """
+
+    coins = db_get_coins()
+
+    template = "{ID:^8}" "{SYMBOL:^10}" "{NAME:^15}" "{COINGECKO_ID:^20}"
+    click.echo("\n" + _template_to_title(template))
+    for c in coins:
+        click.echo(
+            template.format(
+                ID=f"{c['id']}",
+                SYMBOL=f"{c['symbol']}",
+                NAME=f"{c['name']}",
+                COINGECKO_ID=f"{c['coingecko_id']}",
+            )
+        )
+
+
+# endregion
+
+# region deposit
+
+
+@click.group(name="deposit")
+def deposit_cmd():
+    """All regarding deposits"""
+    pass
+
+
+@deposit_cmd.command(name="add")
 @click.argument("symbol", type=str)
 @click.argument("amount", type=float)
 @click.argument("date", type=str)
-def add_deposit(symbol: str, amount: float, date: str):
+def deposit_add_cmd(symbol: str, amount: float, date: str):
     """
-    Add the deposit of coin to the db (transaction in)
+    Add the deposit of coin_cmd to the db (transaction in)
 
-    SYMBOL: coin symbol (es: BTC) \n
-    AMOUNT: coin amount added (es: 0.03) \n
+    SYMBOL: coin_cmd symbol (es: BTC) \n
+    AMOUNT: coin_cmd amount added (es: 0.03) \n
     DATE: date of the transaction (YYYY-MM-DD) \n
     """
 
@@ -76,16 +118,49 @@ def add_deposit(symbol: str, amount: float, date: str):
         exit_with_failure(f"ERROR: {type(e).__name__} - {str(e)}")
 
 
-@click.command(name="add_withdraw")
+@deposit_cmd.command(name="list")
+def deposit_list_cmd():
+    """
+    List all deposits.
+    """
+
+    deposits = db_get_deposits()
+
+    template = "{ID:^8}" "{COIN:^10}" "{AMOUNT:>12}" "{DATE:^20}"
+    click.echo("\n" + _template_to_title(template))
+    for d in deposits:
+        coin_symbol = db_get_coin_symbol_by_id(d["coin_id"])
+        click.echo(
+            template.format(
+                ID=f"{d['id']}",
+                COIN=coin_symbol,
+                AMOUNT=f"{d['amount']}",
+                DATE=f"{d['date']}",
+            )
+        )
+
+
+# endregion
+
+# region withdrawal
+
+
+@click.group(name="withdrawal")
+def withdrawal_cmd():
+    """All regarding withdrawals"""
+    pass
+
+
+@withdrawal_cmd.command(name="add")
 @click.argument("symbol", type=str)
 @click.argument("amount", type=float)
 @click.argument("date", type=str)
-def add_withdraw(symbol: str, amount: float, date: str):
+def withdrawal_add_cmd(symbol: str, amount: float, date: str):
     """
-    Add the withdraw of coin to the db (transaction out)
+    Add the withdraw of coin_cmd to the db (transaction out)
 
-    SYMBOL: coin symbol (es: BTC) \n
-    AMOUNT: coin amount removed (es: 0.03) \n
+    SYMBOL: coin_cmd symbol (es: BTC) \n
+    AMOUNT: coin_cmd amount removed (es: 0.03) \n
     DATE: date of the transaction (YYYY-MM-DD) \n
     """
 
@@ -104,89 +179,16 @@ def add_withdraw(symbol: str, amount: float, date: str):
         exit_with_failure(f"ERROR: {type(e).__name__} - {str(e)}")
 
 
-# view --------------------------------------------------------------------------------------------
-
-
-@click.command(name="list_coins")
-def list_coins():
-    """
-    List all coins.
-    """
-
-    template = "{ID:^8}" "{SYMBOL:^10}" "{NAME:^15}" "{COINGECKO_ID:^20}"
-    click.echo(
-        "\n"
-        + template.format(
-            ID="ID",
-            SYMBOL="SYMBOL",
-            NAME="NAME",
-            COINGECKO_ID="COINGECKO_ID",
-        )
-    )
-
-    coins = db_get_coins()
-
-    for c in coins:
-        click.echo(
-            template.format(
-                ID=f"{c['id']}",
-                SYMBOL=f"{c['symbol']}",
-                NAME=f"{c['name']}",
-                COINGECKO_ID=f"{c['coingecko_id']}",
-            )
-        )
-
-
-@click.command(name="list_deposits")
-def list_deposits():
-    """
-    List all deposits.
-    """
-
-    template = "{ID:^8}" "{COIN:^10}" "{AMOUNT:>12}" "{DATE:^20}"
-    click.echo(
-        "\n"
-        + template.format(
-            ID="ID",
-            COIN="COIN",
-            AMOUNT="AMOUNT",
-            DATE="DATE",
-        )
-    )
-
-    deposits = db_get_deposits()
-
-    for d in deposits:
-        coin_symbol = db_get_coin_symbol_by_id(d["coin_id"])
-        click.echo(
-            template.format(
-                ID=f"{d['id']}",
-                COIN=coin_symbol,
-                AMOUNT=f"{d['amount']}",
-                DATE=f"{d['date']}",
-            )
-        )
-
-
-@click.command(name="list_withdraws")
-def list_withdraws():
+@withdrawal_cmd.command(name="list")
+def withdrawal_list_cmd():
     """
     List all withdraws.
     """
 
-    template = "{ID:^8}" "{COIN:^10}" "{AMOUNT:>12}" "{DATE:^20}"
-    click.echo(
-        "\n"
-        + template.format(
-            ID="ID",
-            COIN="COIN",
-            AMOUNT="AMOUNT",
-            DATE="DATE",
-        )
-    )
-
     withdraws = db_get_withdraws()
 
+    template = "{ID:^8}" "{COIN:^10}" "{AMOUNT:>12}" "{DATE:^20}"
+    click.echo("\n" + _template_to_title(template))
     for w in withdraws:
         coin_symbol = db_get_coin_symbol_by_id(w["coin_id"])
         click.echo(
@@ -198,6 +200,8 @@ def list_withdraws():
             )
         )
 
+
+# endregion
 
 # periodic updates --------------------------------------------------------------------------------
 
