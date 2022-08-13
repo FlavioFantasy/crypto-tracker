@@ -1,7 +1,12 @@
 import click
 
 from tracker import db
-from tracker.cli.utils import template_to_title, TrackerClickGroup, exit_with_failure
+from tracker.cli.utils import (
+    template_to_title,
+    TrackerClickGroup,
+    exit_with_failure,
+    echo_success,
+)
 from tracker.utils import get_exception_str
 
 
@@ -19,9 +24,9 @@ def coin_add_cmd(symbol: str, name: str, coingecko_id: str):
     """
     Add a coin to the db
 
-    SYMBOL: coin_cmd symbol (es: BTC) \n
-    NAME: coin_cmd name (es: Bitcoin) \n
-    COINGECKO_ID: id of the coin_cmd on coingecko (es: bitcoin) \n
+    SYMBOL: coin symbol (es: BTC) \n
+    NAME: coin name (es: Bitcoin) \n
+    COINGECKO_ID: id of the coin on coingecko (es: bitcoin) \n
     """
 
     if not symbol or not name or not coingecko_id:
@@ -29,7 +34,7 @@ def coin_add_cmd(symbol: str, name: str, coingecko_id: str):
 
     try:
         db.coin.add(symbol, name, coingecko_id)
-        click.echo("Coin added to the system")
+        echo_success("Coin added to the system")
     except Exception as e:
         exit_with_failure(f"ERROR: {get_exception_str(e)}")
 
@@ -37,19 +42,19 @@ def coin_add_cmd(symbol: str, name: str, coingecko_id: str):
 @coin_cmd.command(name="list")
 def coin_list_cmd():
     """
-    List all coins.
+    List all coins
     """
 
     coins = db.coin.select()
 
-    template = "{ID:^8}" "{SYMBOL:^10}" "{NAME:^15}" "{COINGECKO_ID:^20}"
+    template = "{ID:<8}" "{SYMBOL:<10}" "{NAME:<20}" "{COINGECKO_ID:<20}"
     click.echo("\n" + template_to_title(template))
     for c in coins:
         click.echo(
             template.format(
-                ID=f"{c['id']}",
-                SYMBOL=f"{c['symbol']}",
-                NAME=f"{c['name']}",
-                COINGECKO_ID=f"{c['coingecko_id']}",
+                ID=c["id"],
+                SYMBOL=c["symbol"],
+                NAME=c["name"],
+                COINGECKO_ID=c["coingecko_id"],
             )
         )
