@@ -1,10 +1,11 @@
 import click
 
 from tracker.coin_balances import coinbal_update
-from tracker.db_handler import *
+
+from tracker import db
 from tracker.prices import prices_update
 from tracker.tot_balances import tot_balances_update
-from tracker.utils import exit_with_failure, valid_date
+from tracker.utils import exit_with_failure, valid_date, get_exception_str
 from tracker.recurrent_update import recurrent_update
 
 
@@ -19,7 +20,7 @@ def setup_all_cmd():
     """
     Setup the app (create db)
     """
-    ok, res = db_create_tables()
+    ok, res = db.general.db_create_tables()
     if ok:
         print("DB tables created successfully")
     else:
@@ -41,21 +42,21 @@ def coin_cmd():
 @click.argument("coingecko_id", type=str)
 def coin_add_cmd(symbol: str, name: str, coingecko_id: str):
     """
-    Add a coin_cmd to the db
+    Add a coin to the db
 
     SYMBOL: coin_cmd symbol (es: BTC) \n
     NAME: coin_cmd name (es: Bitcoin) \n
     COINGECKO_ID: id of the coin_cmd on coingecko (es: bitcoin) \n
     """
 
-    if len(symbol) == 0 or len(name) == 0 or len(coingecko_id) == 0:
+    if not symbol or not name or not coingecko_id:
         exit_with_failure("Invalid input")
 
     try:
-        db_add_coin(symbol, name, coingecko_id)
+        db.coin.db_add_coin(symbol, name, coingecko_id)
         click.echo("Coin added to the system")
     except Exception as e:
-        exit_with_failure(f"ERROR: {str(e)}")
+        exit_with_failure(f"ERROR: {get_exception_str(e)}")
 
 
 @coin_cmd.command(name="list")
@@ -64,7 +65,7 @@ def coin_list_cmd():
     List all coins.
     """
 
-    coins = db_get_coins()
+    coins = db.coin.db_get_coins()
 
     template = "{ID:^8}" "{SYMBOL:^10}" "{NAME:^15}" "{COINGECKO_ID:^20}"
     click.echo("\n" + _template_to_title(template))
@@ -106,16 +107,15 @@ def deposit_add_cmd(symbol: str, amount: float, date: str):
     if len(symbol) == 0 or amount < 0 or not valid_date(date):
         exit_with_failure("Invalid input")
 
-    coin_id = db_get_coin_id_by_symbol(symbol)
-    if coin_id is None:
-        exit_with_failure("Invalid symbol")
+    coin_id = db.coin.db_get_coin_id_by_symbol(symbol)
+    assert coin_id, "Invalid coin"
 
     try:
-        db_add_deposit(coin_id, amount, date)
+        db.transaction.db_add_deposit(coin_id, amount, date)
         click.echo("Deposit added to the system")
 
     except Exception as e:
-        exit_with_failure(f"ERROR: {type(e).__name__} - {str(e)}")
+        exit_with_failure(f"ERROR: {get_exception_str(e)}")
 
 
 @deposit_cmd.command(name="list")
@@ -124,12 +124,12 @@ def deposit_list_cmd():
     List all deposits.
     """
 
-    deposits = db_get_deposits()
+    deposits = db.transaction.db_get_deposits()
 
     template = "{ID:^8}" "{COIN:^10}" "{AMOUNT:>12}" "{DATE:^20}"
     click.echo("\n" + _template_to_title(template))
     for d in deposits:
-        coin_symbol = db_get_coin_symbol_by_id(d["coin_id"])
+        coin_symbol = db.coin.db_get_coin_symbol_by_id(d["coin_id"])
         click.echo(
             template.format(
                 ID=f"{d['id']}",
@@ -167,16 +167,15 @@ def withdrawal_add_cmd(symbol: str, amount: float, date: str):
     if len(symbol) == 0 or amount < 0 or not valid_date(date):
         exit_with_failure("Invalid input")
 
-    coin_id = db_get_coin_id_by_symbol(symbol)
-    if coin_id is None:
-        exit_with_failure("Invalid symbol")
+    coin_id = db.coin.db_get_coin_id_by_symbol(symbol)
+    assert coin_id, "Invalid coin"
 
     try:
-        db_add_withdraws(coin_id, amount, date)
+        db.transaction.db_add_withdraws(coin_id, amount, date)
         click.echo("Withdraw added to the system")
 
     except Exception as e:
-        exit_with_failure(f"ERROR: {type(e).__name__} - {str(e)}")
+        exit_with_failure(f"ERROR: {get_exception_str(e)}")
 
 
 @withdrawal_cmd.command(name="list")
@@ -185,12 +184,12 @@ def withdrawal_list_cmd():
     List all withdraws.
     """
 
-    withdraws = db_get_withdraws()
+    withdraws = db.transaction.db_get_withdraws()
 
     template = "{ID:^8}" "{COIN:^10}" "{AMOUNT:>12}" "{DATE:^20}"
     click.echo("\n" + _template_to_title(template))
     for w in withdraws:
-        coin_symbol = db_get_coin_symbol_by_id(w["coin_id"])
+        coin_symbol = db.coin.db_get_coin_symbol_by_id(w["coin_id"])
         click.echo(
             template.format(
                 ID=f"{w['id']}",

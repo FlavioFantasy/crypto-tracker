@@ -1,11 +1,12 @@
 # https://plotly.com/python/line-and-scatter/
+
 from datetime import date
 from typing import Optional, Union
 
-import pandas as pd
-import plotly.express as px
+import pandas as pd  # type: ignore
+import plotly.express as px  # type: ignore
 
-from tracker.db_handler import db_get_tot_balances
+from tracker import db
 from tracker.telegram_handler import send_image
 from tracker.utils import log_info
 
@@ -14,7 +15,7 @@ def draw_and_send(
     start_date: Optional[Union[str, date]] = None,
     end_date: Optional[Union[str, date]] = None,
 ):
-    all_balances = db_get_tot_balances(None, start_date, end_date)
+    all_balances = db.balance.db_get_tot_balances(None, start_date, end_date)
     all_balances_df = pd.DataFrame(all_balances)
 
     fig = px.line(all_balances_df, x="date", y="eur_amount", title="Crypto portfolio")

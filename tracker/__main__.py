@@ -1,4 +1,14 @@
-from .app_cli import *
+from .app_cli import (
+    setup_all_cmd,
+    coin_cmd,
+    deposit_cmd,
+    withdrawal_cmd,
+    update_coin_balances,
+    update_prices,
+    update_tot_balances,
+    update_all,
+)
+import click
 
 
 @click.group()

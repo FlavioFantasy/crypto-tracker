@@ -26,14 +26,6 @@ def log_error(msg: str) -> None:
         f.write(f"[ERROR] {today_str} - {msg} \n")
 
 
-def build_error(error, env_name: str = None) -> dict:
-    return {"env_name": env_name, "error": error}
-
-
-def build_result(res, env_name: str = None) -> dict:
-    return {"env_name": env_name, "res": res}
-
-
 def exit_with_failure(msg: str, new_line: bool = True) -> None:
     click.echo(click.style(msg, fg="red"), nl=new_line)
     sys.exit(1)
@@ -41,3 +33,7 @@ def exit_with_failure(msg: str, new_line: bool = True) -> None:
 
 def valid_date(date: str) -> bool:
     return re.fullmatch("[0-9]{4}-([01])[0-9]-[0-3][0-9]", date) is not None
+
+
+def get_exception_str(e: BaseException) -> str:
+    return f"{type(e).__name__} - {e}"

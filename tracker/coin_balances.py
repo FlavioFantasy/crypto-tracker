@@ -3,15 +3,11 @@ from datetime import datetime, timedelta
 from typing import List
 
 from tracker import utils
-from tracker.db_handler import (
-    db_get_all_transactions,
-    db_add_coin_balance,
-    db_get_coin_balances,
-)
+from tracker import db
 
 
 def coinbal_get():
-    all_transactions = db_get_all_transactions()
+    all_transactions = db.transaction.db_get_all_transactions()
     # print(json.dumps(all_transactions, indent=2, default=str))
 
     # get all dates
@@ -24,7 +20,7 @@ def coinbal_get():
         for x in range((today - start_date).days)
     ]
 
-    coin_bals = db_get_coin_balances()
+    coin_bals = db.balance.db_get_coin_balances()
     done_dates = [b["date"] for b in coin_bals]
     done_dates = list(dict.fromkeys(done_dates))
 
@@ -34,7 +30,7 @@ def coinbal_get():
 
     # add last coin balance, if the 1st day to elaborate has no tx
     if len(coin_bals) > 0:
-        last_bal_list = db_get_coin_balances(date=coin_bals[-1]["date"])
+        last_bal_list = db.balance.db_get_coin_balances(date=coin_bals[-1]["date"])
         # print("last_bal_list", last_bal_list)
         last_bal = {
             "date": last_bal_list[0]["date"],
@@ -86,7 +82,7 @@ def coinbal_get():
         balances.append(date_bal)
     print("len bal: ", len(balances))
     # remove first if date already in db
-    if len(db_get_coin_balances(date=coin_bals[-1]["date"])) > 0:
+    if len(db.balance.db_get_coin_balances(date=coin_bals[-1]["date"])) > 0:
         balances.pop(0)
     print("len bal: ", len(balances))
     for b in balances:
@@ -97,7 +93,7 @@ def coinbal_get():
 def coinbal_save_on_db(balances: List[dict]):
     for b in balances:
         for c in b["coins"]:
-            db_add_coin_balance(b["date"], c["coin_id"], c["amount"])
+            db.balance.db_add_coin_balance(b["date"], c["coin_id"], c["amount"])
 
 
 def coinbal_update():

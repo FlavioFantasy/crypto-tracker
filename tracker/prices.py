@@ -1,14 +1,10 @@
-import copy
 import time
-from datetime import datetime, timedelta
-from typing import List
 
 import requests
 
 from tracker import utils
-from tracker.db_handler import *
+from tracker import db
 from tracker.coingecko_api import *
-import re
 
 
 def prices_get():
@@ -24,9 +20,9 @@ def prices_get():
             prices_ += prices_date_
 
     # find which data are missing from the prices table, based on date and coin present in coin_balances
-    missing_prices = db_get_missing_prices()
+    missing_prices = db.price.db_get_missing_prices()
     # print(f"missing_prices: {missing_prices}")
-    all_coins = db_get_coins()
+    all_coins = db.coin.db_get_coins()
 
     prices = []
     num_done = 0
@@ -57,7 +53,7 @@ def prices_get():
 
 def prices_save_on_db(prices: List[dict]):
     for p in prices:
-        db_add_price(p["date"], p["coin_id"], p["coin_usd"], p["coin_eur"])
+        db.price.db_add_price(p["date"], p["coin_id"], p["coin_usd"], p["coin_eur"])
 
 
 def prices_update():

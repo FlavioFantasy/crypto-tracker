@@ -1,11 +1,10 @@
 # https://www.coingecko.com/en/api/documentation
 # NOTE: max 50 requests per minute
+
+import re
 from typing import List
 
-from pycoingecko import CoinGeckoAPI
-import datetime, calendar
-import time
-import re
+from pycoingecko import CoinGeckoAPI  # type: ignore
 
 
 def cg_get_prices_by_date(coins: List[dict], date: str):
