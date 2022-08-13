@@ -13,18 +13,18 @@ def balance_cmd():
 @balance_cmd.command(name="list-last")
 def balance_list_cmd():
     """
-    List last coin balances.
+    List last coin balances
     """
 
     coin_balances = db.balance.get_last_coin_balances()
 
-    template = "{DATE:<16}" "{COIN:<10}" "{AMOUNT:<20}"
+    template = "{DATE:<16}" "{COIN:<10}" "{AMOUNT:>16}"
     click.echo("\n" + template_to_title(template))
     for cb in coin_balances:
         click.echo(
             template.format(
-                DATE=str(cb["date"]),
+                DATE=cb["date"],
                 COIN=db.coin.get_symbol_by_id(cb["coin_id"]),
-                AMOUNT=cb["amount"],
+                AMOUNT=round(cb["amount"], 8),
             )
         )
