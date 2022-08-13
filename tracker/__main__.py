@@ -1,16 +1,9 @@
 import click
 
-from .app_cli import (
-    balance_cmd,
-    setup_all_cmd,
-    coin_cmd,
-    deposit_cmd,
-    withdrawal_cmd,
-    update_coin_balances,
-    update_prices,
-    update_tot_balances,
-    update_all,
-)
+from tracker.cli.balance import balance_cmd
+from tracker.cli.coin import coin_cmd
+from tracker.cli.misc import setup_all_cmd, update_all_cmd
+from tracker.cli.transaction import deposit_cmd, withdrawal_cmd
 
 
 @click.group()
@@ -18,17 +11,13 @@ def crypto_tracker() -> None:
     """
     Set of commands to handle the db app
     """
-    pass  # pragma: no cover
+    pass
 
-
-crypto_tracker.add_command(setup_all_cmd)
 
 crypto_tracker.add_command(coin_cmd)
 crypto_tracker.add_command(deposit_cmd)
 crypto_tracker.add_command(withdrawal_cmd)
 crypto_tracker.add_command(balance_cmd)
 
-crypto_tracker.add_command(update_coin_balances)
-crypto_tracker.add_command(update_prices)
-crypto_tracker.add_command(update_tot_balances)
-crypto_tracker.add_command(update_all)
+crypto_tracker.add_command(setup_all_cmd)
+crypto_tracker.add_command(update_all_cmd)

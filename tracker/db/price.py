@@ -45,7 +45,9 @@ def get_missing() -> List[dict]:
     return tuple_rows_to_dict(res)
 
 
-def add(date_: Union[str, date], coin_id: int, coin_usd: float, coin_eur: float) -> None:
+def add(
+    date_: Union[str, date], coin_id: int, coin_usd: float, coin_eur: float
+) -> None:
     conn = get_conn()
     curr = conn.cursor()
 
