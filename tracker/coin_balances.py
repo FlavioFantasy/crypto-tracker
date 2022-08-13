@@ -6,7 +6,20 @@ from tracker import db
 from tracker import utils
 
 
-def coinbal_get():
+def coinbal_update():
+    balances = coinbal_get()
+    if len(balances) > 0:
+        coinbal_save_on_db(balances)
+        str_to_show = f"coinbal_update: saved {len(balances)} coin balances on db (from {balances[0]['date']} to {balances[-1]['date']})"
+    else:
+        str_to_show = "coinbal_update: no update were made"
+
+    utils.log_info(str_to_show)
+    print(str_to_show)
+
+
+# TODO: guarda cosa fa
+def coinbal_get() -> List[dict]:
     all_transactions = db.transaction.get_all_transactions()
     # print(json.dumps(all_transactions, indent=2, default=str))
 
@@ -94,15 +107,3 @@ def coinbal_save_on_db(balances: List[dict]):
     for b in balances:
         for c in b["coins"]:
             db.balance.add_coin_balance(b["date"], c["coin_id"], c["amount"])
-
-
-def coinbal_update():
-    balances = coinbal_get()
-    if len(balances) > 0:
-        coinbal_save_on_db(balances)
-        str_to_show = f"coinbal_update: saved {len(balances)} coin balances on db (from {balances[0]['date']} to {balances[-1]['date']})"
-    else:
-        str_to_show = "coinbal_update: no update were made"
-
-    utils.log_info(str_to_show)
-    print(str_to_show)
