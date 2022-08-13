@@ -26,12 +26,16 @@ def draw_and_send(
     start_date: Optional[Union[str, date]] = None,
     end_date: Optional[Union[str, date]] = None,
 ) -> None:
-    """ Draw graph of eur valuation of crypto tracker and send it via Telegram """
+    """Draw graph of eur valuation of crypto tracker and send it via Telegram"""
 
-    total_balances_df = pd.DataFrame(db.balance.get_tot_balances(None, start_date, end_date))
+    total_balances_df = pd.DataFrame(
+        db.balance.get_tot_balances(None, start_date, end_date)
+    )
 
     # https://plotly.com/python/line-and-scatter/
-    eur_graph = px.line(total_balances_df, x="date", y="eur_amount", title="Crypto portfolio")
+    eur_graph = px.line(
+        total_balances_df, x="date", y="eur_amount", title="Crypto portfolio"
+    )
     # fig.show()  # to open browser with graph
 
     img_name = _get_file_name()
