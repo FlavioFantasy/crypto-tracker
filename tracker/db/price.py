@@ -1,9 +1,10 @@
-from typing import List
+from datetime import date
+from typing import List, Optional, Union
 
 from tracker.db.general import get_conn, tuple_rows_to_dict
 
 
-def select(date: str = None) -> List[dict]:
+def select(date_: Optional[Union[str, date]] = None) -> List[dict]:
     conn = get_conn()
     curr = conn.cursor()
 
@@ -12,7 +13,7 @@ def select(date: str = None) -> List[dict]:
         FROM prices
         {}
     """
-    where_clause = f"WHERE date='{date}'" if date else ""
+    where_clause = f"WHERE date='{date_}'" if date_ else ""
 
     curr.execute(sql_select.format(where_clause))
     res = curr.fetchall()
@@ -44,7 +45,7 @@ def get_missing() -> List[dict]:
     return tuple_rows_to_dict(res)
 
 
-def add(date: str, coin_id: int, coin_usd: float, coin_eur: float) -> None:
+def add(date_: Union[str, date], coin_id: int, coin_usd: float, coin_eur: float) -> None:
     conn = get_conn()
     curr = conn.cursor()
 
@@ -52,7 +53,7 @@ def add(date: str, coin_id: int, coin_usd: float, coin_eur: float) -> None:
         INSERT INTO prices (date, coin_id, coin_usd, coin_eur)
         VALUES (?, ?, ?, ?)
     """
-    insert_params = [date, coin_id, coin_usd, coin_eur]
+    insert_params = [date_, coin_id, coin_usd, coin_eur]
     curr.execute(sql_insert, insert_params)
 
     conn.commit()

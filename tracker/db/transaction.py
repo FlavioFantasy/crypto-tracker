@@ -1,9 +1,10 @@
-from typing import List
+from datetime import date
+from typing import List, Optional, Union
 
 from tracker.db.general import get_conn, tuple_rows_to_dict
 
 
-def select_deposits(date: str = None) -> List[dict]:
+def select_deposits(date_: Optional[Union[str, date]] = None) -> List[dict]:
     conn = get_conn()
     curr = conn.cursor()
 
@@ -13,7 +14,7 @@ def select_deposits(date: str = None) -> List[dict]:
         {}
         ORDER BY date
     """
-    where_clause = f"WHERE date='{date}'" if date else ""
+    where_clause = f"WHERE date='{date_}'" if date_ else ""
 
     curr.execute(sql_select.format(where_clause))
     res = curr.fetchall()
@@ -22,7 +23,7 @@ def select_deposits(date: str = None) -> List[dict]:
     return tuple_rows_to_dict(res)
 
 
-def add_deposit(coin_id: int, amount: float, date: str) -> None:
+def add_deposit(coin_id: int, amount: float, date_: Union[str, date]) -> None:
     conn = get_conn()
     curr = conn.cursor()
 
@@ -30,14 +31,14 @@ def add_deposit(coin_id: int, amount: float, date: str) -> None:
         INSERT INTO deposits (coin_id, amount, date)
         VALUES (?, ?, ?)
     """
-    insert_params = [coin_id, amount, date]
+    insert_params = [coin_id, amount, date_]
     curr.execute(sql_insert, insert_params)
 
     conn.commit()
     conn.close()
 
 
-def select_withdrawals(date: str = None) -> List[dict]:
+def select_withdrawals(date_: Optional[Union[str, date]] = None) -> List[dict]:
     conn = get_conn()
     curr = conn.cursor()
 
@@ -47,7 +48,7 @@ def select_withdrawals(date: str = None) -> List[dict]:
         {}
         ORDER BY date
     """
-    where_clause = f"WHERE date='{date}'" if date else ""
+    where_clause = f"WHERE date='{date_}'" if date_ else ""
 
     curr.execute(sql_select.format(where_clause))
     res = curr.fetchall()
@@ -56,7 +57,7 @@ def select_withdrawals(date: str = None) -> List[dict]:
     return tuple_rows_to_dict(res)
 
 
-def add_withdrawal(coin_id: int, amount: float, date: str) -> None:
+def add_withdrawal(coin_id: int, amount: float, date_: Union[str, date]) -> None:
     conn = get_conn()
     curr = conn.cursor()
 
@@ -64,7 +65,7 @@ def add_withdrawal(coin_id: int, amount: float, date: str) -> None:
         INSERT INTO withdraws (coin_id, amount, date)
         VALUES (?, ?, ?)
     """
-    insert_params = [coin_id, amount, date]
+    insert_params = [coin_id, amount, date_]
     curr.execute(sql_insert, insert_params)
 
     conn.commit()
