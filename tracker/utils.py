@@ -5,13 +5,17 @@ from tracker.config import CurrentConf
 
 
 def log_info(msg: str) -> None:
+    s = f"[INFO] {datetime.now().strftime('%Y-%m-%d %H:%M:%S')} - {msg} \n"
     with open(CurrentConf.get().get_log_file(), "a") as f:
-        f.write(f"[INFO] {datetime.now().strftime('%Y-%m-%d %H:%M:%S')} - {msg} \n")
+        f.write(s)
+    print(s)
 
 
 def log_error(msg: str) -> None:
+    s = f"[ERROR] {datetime.now().strftime('%Y-%m-%d %H:%M:%S')} - {msg} \n"
     with open(CurrentConf.get().get_log_file(), "a") as f:
-        f.write(f"[ERROR] {datetime.now().strftime('%Y-%m-%d %H:%M:%S')} - {msg} \n")
+        f.write(s)
+    print(s)
 
 
 def valid_date(date: str) -> bool:

@@ -3,107 +3,104 @@ from datetime import datetime, timedelta
 from typing import List
 
 from tracker import db
-from tracker import utils
+from tracker.utils import log_info
 
 
-def coinbal_update():
-    balances = coinbal_get()
-    if len(balances) > 0:
-        coinbal_save_on_db(balances)
-        str_to_show = f"coinbal_update: saved {len(balances)} coin balances on db (from {balances[0]['date']} to {balances[-1]['date']})"
+def add_missing_coin_balances() -> None:
+    """
+    Add missing coin balances, after calculating coin amount for each day
+    """
+
+    missing_coin_balances = calculate_missing_coin_balances()
+    if missing_coin_balances:
+        # save in db
+        for cb in missing_coin_balances:
+            for c in cb["coins"]:
+                db.balance.add_coin_balance(cb["date"], c["coin_id"], c["amount"])
+
+        msg = (
+            f"added {len(missing_coin_balances)} rows to coin_balances "
+            f"(from {missing_coin_balances[0]['date']} to {missing_coin_balances[-1]['date']})"
+        )
     else:
-        str_to_show = "coinbal_update: no update were made"
+        msg = "no rows were added"
 
-    utils.log_info(str_to_show)
-    print(str_to_show)
+    log_info(f"add_missing_coin_balances: {msg}")
 
 
-# TODO: guarda cosa fa
-def coinbal_get() -> List[dict]:
-    all_transactions = db.transaction.get_all_transactions()
-    # print(json.dumps(all_transactions, indent=2, default=str))
+def calculate_missing_coin_balances() -> List[dict]:
+    """Calculate missing daily balances for each coin, ordered by date
 
-    # get all dates
-    start_date_str = all_transactions[0]["date"]
-    start_date = datetime.strptime(start_date_str, "%Y-%m-%d").date()
-    today = datetime.today().date()
+    :return: [ { date:_, coins: [ { coin_id:_, amount:_ }, ... ] }, ... ]
+    """
 
+    # get current coin balances
+    coin_bals = db.balance.get_coin_balances()
+
+    # get all txs (in and out)
+    transactions = db.transaction.get_transactions()
+
+    # get all dates, from 1st tx to yesterday
     all_dates = [
-        (start_date + timedelta(days=x)).strftime("%Y-%m-%d")
-        for x in range((today - start_date).days)
+        (transactions[0]["date"] + timedelta(days=x))
+        for x in range((datetime.today().date() - transactions[0]["date"]).days)
     ]
 
-    coin_bals = db.balance.get_coin_balances()
-    done_dates = [b["date"] for b in coin_bals]
-    done_dates = list(dict.fromkeys(done_dates))
-
+    # get to do dates
+    done_dates = list(set(b["date"] for b in coin_bals))
     todo_dates = [d for d in all_dates if d not in done_dates]
 
-    balances = []
+    # track daily balances
+    daily_balances: List[dict] = []
 
-    # add last coin balance, if the 1st day to elaborate has no tx
-    if len(coin_bals) > 0:
-        last_bal_list = db.balance.get_coin_balances(date_=coin_bals[-1]["date"])
-        # print("last_bal_list", last_bal_list)
-        last_bal = {
-            "date": last_bal_list[0]["date"],
+    # if present, add last day coin balances
+    if coin_bals:
+        last_day_cbs = [cb for cb in coin_bals if cb["date"] == coin_bals[-1]["date"]]
+        last_daily_bal = {
+            "date": last_day_cbs[0]["date"],
             "coins": [
-                {"coin_id": i["coin_id"], "amount": i["amount"]} for i in last_bal_list
+                {"coin_id": i["coin_id"], "amount": i["amount"]} for i in last_day_cbs
             ],
         }
-        print("last_bal", last_bal)
-        balances.append(last_bal)
+        # print("last_daily_bal: ", last_daily_bal)
+        daily_balances.append(last_daily_bal)
 
-    # calculate balances for the dates i need
-    for date in todo_dates:
-        date_bal = {"date": date}
+    # calculate balances for the dates I need
+    for d in todo_dates:
+        # print("d: ", d)
 
-        to_remove = []
+        prev_day_coins = daily_balances[-1]["coins"] if daily_balances else []
+        curr_day_coins = copy.deepcopy(prev_day_coins)
+        # print("curr_day_coins: ", curr_day_coins)
 
-        # calculate balances for transactions we are considering
-        yesterday_coins = balances[-1]["coins"] if len(balances) > 0 else []
-        date_coins = copy.deepcopy(yesterday_coins)
+        # for each tx (dep, wit) done in the date I am looping
+        for t in [tx for tx in transactions if tx["date"] == d]:
+            # print("t: ", t)
 
-        for t in [tx for tx in all_transactions if tx["date"] == date]:
+            # I didnt have that coin the previous day
+            if t["coin_id"] not in [c["coin_id"] for c in curr_day_coins]:
+                # add with amt=0, since it will be updated later
+                curr_day_coins.append({"coin_id": t["coin_id"], "amount": 0})
 
-            # add if coin not in list
-            if t["coin_id"] not in [c["coin_id"] for c in date_coins]:
-                date_coins.append({"coin_id": t["coin_id"], "amount": 0})
+            # get reference to dict, to easily update its value
+            coin_ref = next(c for c in curr_day_coins if c["coin_id"] == t["coin_id"])
 
-            # get coin ref
-            coin_ref = next(
-                (item for item in date_coins if item["coin_id"] == t["coin_id"]), None
-            )
+            # update coin balance
+            amt_to_add = t["amount"] if t["action"] == "in" else -t["amount"]
+            coin_ref["amount"] += amt_to_add
+            # print("curr_day_coins: ", curr_day_coins)
 
-            # in or out
-            if t["action"] == "in":
-                coin_ref["amount"] += t["amount"]
-            else:
-                coin_ref["amount"] -= t["amount"]
+        # remove if amount is zero
+        curr_day_coins = [c for c in curr_day_coins if c["amount"] != 0]
 
-                if coin_ref["amount"] == 0:
-                    to_remove.append(t["coin_id"])
+        daily_bal = {"date": d, "coins": curr_day_coins}
+        # print("daily_bal: ", daily_bal)
 
-        # cleanup
-        for c_rem in to_remove:
-            date_coins = [c for c in date_coins if c["coin_id"] != c_rem]
+        daily_balances.append(daily_bal)
+        # print()
 
-        date_bal["coins"] = date_coins
+    # remove first daily balance if date was already in db
+    if db.balance.get_coin_balances(date_=daily_balances[0]["date"]):
+        daily_balances.pop(0)
 
-        # append to all
-        # print(date_bal)
-        balances.append(date_bal)
-    print("len bal: ", len(balances))
-    # remove first if date already in db
-    if len(db.balance.get_coin_balances(date_=coin_bals[-1]["date"])) > 0:
-        balances.pop(0)
-    print("len bal: ", len(balances))
-    for b in balances:
-        print(f"bal: {b}")
-    return balances
-
-
-def coinbal_save_on_db(balances: List[dict]):
-    for b in balances:
-        for c in b["coins"]:
-            db.balance.add_coin_balance(b["date"], c["coin_id"], c["amount"])
+    return daily_balances
