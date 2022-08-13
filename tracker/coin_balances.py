@@ -6,7 +6,20 @@ from tracker import db
 from tracker import utils
 
 
-def coinbal_get():
+def coinbal_update():
+    balances = coinbal_get()
+    if len(balances) > 0:
+        coinbal_save_on_db(balances)
+        str_to_show = f"coinbal_update: saved {len(balances)} coin balances on db (from {balances[0]['date']} to {balances[-1]['date']})"
+    else:
+        str_to_show = "coinbal_update: no update were made"
+
+    utils.log_info(str_to_show)
+    print(str_to_show)
+
+
+# TODO: guarda cosa fa
+def coinbal_get() -> List[dict]:
     all_transactions = db.transaction.get_all_transactions()
     # print(json.dumps(all_transactions, indent=2, default=str))
 
@@ -30,7 +43,7 @@ def coinbal_get():
 
     # add last coin balance, if the 1st day to elaborate has no tx
     if len(coin_bals) > 0:
-        last_bal_list = db.balance.get_coin_balances(date=coin_bals[-1]["date"])
+        last_bal_list = db.balance.get_coin_balances(date_=coin_bals[-1]["date"])
         # print("last_bal_list", last_bal_list)
         last_bal = {
             "date": last_bal_list[0]["date"],
@@ -82,7 +95,7 @@ def coinbal_get():
         balances.append(date_bal)
     print("len bal: ", len(balances))
     # remove first if date already in db
-    if len(db.balance.get_coin_balances(date=coin_bals[-1]["date"])) > 0:
+    if len(db.balance.get_coin_balances(date_=coin_bals[-1]["date"])) > 0:
         balances.pop(0)
     print("len bal: ", len(balances))
     for b in balances:
@@ -94,15 +107,3 @@ def coinbal_save_on_db(balances: List[dict]):
     for b in balances:
         for c in b["coins"]:
             db.balance.add_coin_balance(b["date"], c["coin_id"], c["amount"])
-
-
-def coinbal_update():
-    balances = coinbal_get()
-    if len(balances) > 0:
-        coinbal_save_on_db(balances)
-        str_to_show = f"coinbal_update: saved {len(balances)} coin balances on db (from {balances[0]['date']} to {balances[-1]['date']})"
-    else:
-        str_to_show = "coinbal_update: no update were made"
-
-    utils.log_info(str_to_show)
-    print(str_to_show)
