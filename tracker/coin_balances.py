@@ -43,7 +43,7 @@ def coinbal_get() -> List[dict]:
 
     # add last coin balance, if the 1st day to elaborate has no tx
     if len(coin_bals) > 0:
-        last_bal_list = db.balance.get_coin_balances(date=coin_bals[-1]["date"])
+        last_bal_list = db.balance.get_coin_balances(date_=coin_bals[-1]["date"])
         # print("last_bal_list", last_bal_list)
         last_bal = {
             "date": last_bal_list[0]["date"],
@@ -95,7 +95,7 @@ def coinbal_get() -> List[dict]:
         balances.append(date_bal)
     print("len bal: ", len(balances))
     # remove first if date already in db
-    if len(db.balance.get_coin_balances(date=coin_bals[-1]["date"])) > 0:
+    if len(db.balance.get_coin_balances(date_=coin_bals[-1]["date"])) > 0:
         balances.pop(0)
     print("len bal: ", len(balances))
     for b in balances:
