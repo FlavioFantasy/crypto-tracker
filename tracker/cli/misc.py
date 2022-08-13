@@ -1,19 +1,20 @@
 import click
 
 from tracker import db
+from tracker.cli.utils import echo_success, echo_fail
 from tracker.recurrent_update import recurrent_update
 
 
-@click.command(name="setup-all")
+@click.command(name="init-db")
 def setup_all_cmd():
     """
-    Setup the app (create db)
+    Setup the app, creating sqlite db file and db tables
     """
     ok, res = db.general.create_tables()
     if ok:
-        print("DB tables created successfully")
+        echo_success("DB tables created successfully")
     else:
-        print(f"ERROR: {res}")
+        echo_fail(f"ERROR: {res}")
 
 
 @click.command(name="update-all")

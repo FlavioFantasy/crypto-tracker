@@ -1,14 +1,34 @@
+import sys
 from typing import List
 
 import click
 
-_HELP_CMD = "help"
 
-
-def _template_to_title(template) -> str:
+def template_to_title(template) -> str:
     column_names = [s.split(":")[0] for s in template.strip("{}").split("}{")]
     column_dict = {t: t for t in column_names}
     return template.format(**column_dict)
+
+
+def echo_success(msg: str, nl: bool = True) -> None:
+    click.echo(click.style(msg, fg="green"), nl=nl)
+
+
+def echo_warning(msg: str, nl: bool = True) -> None:
+    click.echo(click.style(msg, fg="yellow"), nl=nl)
+
+
+def echo_fail(msg: str, nl: bool = True) -> None:
+    click.echo(click.style(msg, fg="red"), nl=nl)
+
+
+def exit_with_failure(msg: str, nl: bool = True) -> None:
+    echo_fail(msg, nl=nl)
+    sys.exit(1)
+
+
+# region help cmd
+_HELP_CMD = "help"
 
 
 class TrackerClickGroup(click.Group):
@@ -66,3 +86,6 @@ def recurse_subcmds(dict_ctx, indent="") -> List[str]:
         res.append(f"{cmd_str.ljust(40)} {descr}")
         res.extend(recurse_subcmds(child_ctx, indent))
     return res
+
+
+# endregion

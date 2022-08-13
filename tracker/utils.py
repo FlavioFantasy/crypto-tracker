@@ -1,8 +1,5 @@
 import re
-import sys
 from datetime import datetime
-
-import click
 
 from tracker.config import CurrentConf
 
@@ -23,11 +20,6 @@ def log_error(msg: str) -> None:
 
     with open(log_file, "a") as f:
         f.write(f"[ERROR] {today_str} - {msg} \n")
-
-
-def exit_with_failure(msg: str, new_line: bool = True) -> None:
-    click.echo(click.style(msg, fg="red"), nl=new_line)
-    sys.exit(1)
 
 
 def valid_date(date: str) -> bool:

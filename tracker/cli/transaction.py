@@ -1,8 +1,8 @@
 import click
 
 from tracker import db
-from tracker.cli.utils import _template_to_title, TrackerClickGroup
-from tracker.utils import valid_date, exit_with_failure, get_exception_str
+from tracker.cli.utils import template_to_title, TrackerClickGroup, exit_with_failure
+from tracker.utils import valid_date, get_exception_str
 
 
 @click.group(name="deposit", cls=TrackerClickGroup)
@@ -47,7 +47,7 @@ def deposit_list_cmd():
     deposits = db.transaction.select_deposits()
 
     template = "{ID:^8}" "{COIN:^10}" "{AMOUNT:>12}" "{DATE:^20}"
-    click.echo("\n" + _template_to_title(template))
+    click.echo("\n" + template_to_title(template))
     for d in deposits:
         coin_symbol = db.coin.get_symbol_by_id(d["coin_id"])
         click.echo(
@@ -102,7 +102,7 @@ def withdrawal_list_cmd():
     withdraws = db.transaction.select_withdrawals()
 
     template = "{ID:^8}" "{COIN:^10}" "{AMOUNT:>12}" "{DATE:^20}"
-    click.echo("\n" + _template_to_title(template))
+    click.echo("\n" + template_to_title(template))
     for w in withdraws:
         coin_symbol = db.coin.get_symbol_by_id(w["coin_id"])
         click.echo(

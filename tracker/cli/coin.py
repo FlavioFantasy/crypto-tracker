@@ -1,8 +1,8 @@
 import click
 
 from tracker import db
-from tracker.cli.utils import _template_to_title, TrackerClickGroup
-from tracker.utils import exit_with_failure, get_exception_str
+from tracker.cli.utils import template_to_title, TrackerClickGroup, exit_with_failure
+from tracker.utils import get_exception_str
 
 
 @click.group(name="coin", cls=TrackerClickGroup)
@@ -43,7 +43,7 @@ def coin_list_cmd():
     coins = db.coin.select()
 
     template = "{ID:^8}" "{SYMBOL:^10}" "{NAME:^15}" "{COINGECKO_ID:^20}"
-    click.echo("\n" + _template_to_title(template))
+    click.echo("\n" + template_to_title(template))
     for c in coins:
         click.echo(
             template.format(
