@@ -4,7 +4,7 @@ from typing import List
 import requests
 
 from tracker import db
-from tracker.coingecko_api import cg_get_coin_price
+from tracker.external_api.coingecko_api import cg_get_coin_price
 from tracker.utils import log_info
 
 

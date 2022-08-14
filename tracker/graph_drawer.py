@@ -7,7 +7,7 @@ import plotly.express as px  # type: ignore
 
 from tracker import db
 from tracker.config import CurrentConf
-from tracker.telegram_handler import send_image
+from tracker.external_api.telegram_api import send_image
 from tracker.utils import log_info
 
 

@@ -2,7 +2,7 @@ from datetime import date
 from typing import List, Dict
 
 from tracker import db
-from tracker.telegram_handler import send_message
+from tracker.external_api.telegram_api import send_message
 from tracker.utils import log_info
 
 
