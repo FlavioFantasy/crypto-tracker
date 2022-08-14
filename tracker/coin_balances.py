@@ -7,9 +7,7 @@ from tracker.utils import log_info
 
 
 def add_missing_coin_balances() -> None:
-    """
-    Add missing coin balances, after calculating coin amount for each day
-    """
+    """Add missing coin balances, after calculating coin amount for each day"""
 
     missing_coin_balances = calculate_missing_coin_balances()
     if missing_coin_balances:
