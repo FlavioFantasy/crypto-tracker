@@ -24,7 +24,10 @@ def select(date_: Optional[Union[str, date]] = None) -> List[dict]:
 
 
 def get_missing() -> List[dict]:
-    """ find which data are missing from the prices table, based on date and coin present in coin_balances """
+    """find which data are missing from the prices table, based on date and coin present in coin_balances
+
+    :return: [ { date:_, coin_id:_ }, ... ]
+    """
     conn = get_conn()
     curr = conn.cursor()
 

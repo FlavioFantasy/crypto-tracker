@@ -1,9 +1,10 @@
 import time
+from typing import List
 
 import requests
 
 from tracker import db
-from tracker.coingecko_api import *
+from tracker.coingecko_api import cg_get_coin_price
 from tracker.utils import log_info
 
 
@@ -13,10 +14,8 @@ def add_missing_coin_prices() -> None:
     missing_coin_prices = get_missing_coin_prices()
     if missing_coin_prices:
         # save in db
-        # for p in missing_coin_prices:
-        #     db.price.add(p["date"], p["coin_id"], p["coin_usd"], p["coin_eur"])
-
-        print("I WOULD ADD IN DB, BUT THIS IS TEST")
+        for cp in missing_coin_prices:
+            db.price.add(cp["date"], cp["coin_id"], cp["coin_usd"], cp["coin_eur"])
 
         msg = (
             f"added {len(missing_coin_prices)} rows to prices "
@@ -31,46 +30,34 @@ def add_missing_coin_prices() -> None:
 def get_missing_coin_prices() -> List[dict]:
     """Get missing coin prices, using CoinGecko APIs
 
-    :return: [ {  }, ... ]
+    :return: [ { date_, coin_id:_, coin_eur:_, coin_usd:_ }, ... ]
     """
-
-    def elaborate_missing_prices(
-        all_coins_: List[dict], missing_prices_: List[dict], prices_: List[dict]
-    ) -> None:
-        for mp_ in missing_prices_:
-            coins_ = [c for c in all_coins_ if c["id"] == mp_["coin_id"]]
-            date_ = mp_["date"]
-            print(f"getting prices for {date_} - {coins_[0]['symbol']}")
-            prices_date_ = cg_get_prices_by_date(coins_, date_)
-
-            prices_ += prices_date_
 
     # get missing date-coin
     missing_prices = db.price.get_missing()
-    print(f"missing_prices: {missing_prices}")
+    # print(f"missing_prices: {missing_prices}")
 
-    coins = db.coin.select()
+    coin_id_to_coingecko_id = {c["id"]: c["coingecko_id"] for c in db.coin.select()}
 
-    coin_prices = []
-    num_done = 0
-    num_tot = len(missing_prices)
+    coin_prices: List[dict] = []
 
     # try untill it fails (max req in a minute)
-    while num_done < num_tot:
-        try:
-            # do from what i have done
-            elaborate_missing_prices(coins, missing_prices[num_done:], coin_prices)
-
-            num_done = len(coin_prices)
-
-        # exceded 50 reqs in a minute
-        except (requests.exceptions.HTTPError, ValueError) as e:
-            print(f"caught {e} ...")
-            num_done = len(coin_prices)
-            print(f" > Done {num_done} out of {num_tot}, waiting 62 secs ...")
-            time.sleep(62)
+    for mp in missing_prices:
+        # print("\ndoing: ", mp)
+        cp: dict = {}
+        t = 10
+        while not cp:
+            try:
+                cp = cg_get_coin_price(
+                    mp["coin_id"], coin_id_to_coingecko_id[mp["coin_id"]], mp["date"]
+                )
+            # exceded 50 reqs in a minute
+            except (requests.exceptions.HTTPError, ValueError) as e:
+                # print(f"caught {e} ...")
+                msg = f"Got {len(coin_prices)}/{len(missing_prices)} prices, waiting {t} secs ..."
+                print(msg)
+                time.sleep(t)
+                t += 10
+        coin_prices.append(cp)
 
     return coin_prices
-
-
-add_missing_coin_prices()
