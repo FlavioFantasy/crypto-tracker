@@ -111,19 +111,24 @@ def get_tot_balances(
 
 
 def get_missing_tot_balances() -> List[dict]:
+    """Get missing total balances dates, valuating coins in eur and usd, order by date
+
+    :return: [ { date:_, coin_id:_, amount:_, coin_eur:_, coin_usd:_ }, ... ]
+    """
     conn = get_conn()
     curr = conn.cursor()
 
     sql_select = """
-        SELECT CB.date, CB.amount, P.coin_eur, P.coin_usd
+        SELECT CB.date, CB.coin_id, CB.amount, P.coin_eur, P.coin_usd
         FROM coin_balances as CB
         JOIN prices as P
             on CB.coin_id = P.coin_id and CB.date = P.date
-        WHERE NOT EXISTS
-            (SELECT *
+        WHERE NOT EXISTS (
+            SELECT *
             FROM tot_balances as TB
             WHERE TB.date = CB.date
-            )
+        )
+        ORDER BY CB.date
     """
 
     curr.execute(sql_select)

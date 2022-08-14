@@ -3,9 +3,9 @@ from datetime import date
 from dateutil.relativedelta import relativedelta
 
 from tracker.coin_balances import add_missing_coin_balances
-from tracker.graph_drawer import draw_and_send
 from tracker.coin_prices import add_missing_coin_prices
-from tracker.tot_balances import tot_balances_update
+from tracker.graph_drawer import draw_and_send
+from tracker.total_balances import add_missing_total_balances
 
 
 def recurrent_update():
@@ -14,7 +14,7 @@ def recurrent_update():
     """
     add_missing_coin_balances()
     add_missing_coin_prices()
-    tot_balances_update()
+    add_missing_total_balances()
 
     # all
     draw_and_send()
