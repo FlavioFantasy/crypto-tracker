@@ -2,7 +2,7 @@ import click
 
 from tracker import db
 from tracker.cli.utils import echo_success, echo_fail
-from tracker.global_update import add_all_missing
+from tracker.global_operation import add_all_missing
 
 
 @click.command(name="init-db")
