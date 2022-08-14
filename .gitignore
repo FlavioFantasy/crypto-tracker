@@ -132,5 +132,5 @@ dmypy.json
 config.ini
 resources/db_files/my_db.db
 resources/db_files/log.txt
-resources/images/
+resources/images/*
 .idea
