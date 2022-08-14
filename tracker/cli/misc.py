@@ -2,7 +2,7 @@ import click
 
 from tracker import db
 from tracker.cli.utils import echo_success, echo_fail
-from tracker.recurrent_update import recurrent_update
+from tracker.global_operation import add_all_missing
 
 
 @click.command(name="init-db")
@@ -22,4 +22,4 @@ def update_all_cmd():
     """
     Do all recurrent updates necessary (coin_balances, prices and total_balances) and the updated graph.
     """
-    recurrent_update()
+    add_all_missing()
