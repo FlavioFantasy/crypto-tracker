@@ -10,6 +10,7 @@ from tracker.config import CurrentConf
 from tracker.external_api.telegram_api import tg_send_message, tg_send_image
 from tracker.graph_drawer import draw_save_graph
 from tracker.total_balance import add_missing_total_balances, get_asset_allocation
+from tracker.utils import log_info
 
 
 def add_all_missing() -> None:
@@ -56,3 +57,5 @@ def send_recaps() -> None:
     ]
     for img_path in this_month_graphs:
         tg_send_image(img_path)
+
+    log_info(f"send_recaps: sent Telegram messages")

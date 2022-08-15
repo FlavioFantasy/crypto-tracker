@@ -5,16 +5,16 @@ from tracker.config import CurrentConf
 
 
 def log_info(msg: str) -> None:
-    s = f"[INFO] {datetime.now().strftime('%Y-%m-%d %H:%M:%S')} - {msg} \n"
+    s = f"[INFO] {datetime.now().strftime('%Y-%m-%d %H:%M:%S')} - {msg}"
     with open(CurrentConf.get().get_log_file(), "a") as f:
-        f.write(s)
+        f.write(f"{s}\n")
     print(s)
 
 
 def log_error(msg: str) -> None:
-    s = f"[ERROR] {datetime.now().strftime('%Y-%m-%d %H:%M:%S')} - {msg} \n"
+    s = f"[ERROR] {datetime.now().strftime('%Y-%m-%d %H:%M:%S')} - {msg}"
     with open(CurrentConf.get().get_log_file(), "a") as f:
-        f.write(s)
+        f.write(f"{s}\n")
     print(s)
 
 
