@@ -79,6 +79,7 @@ def get_tot_balances(
     date_: Optional[Union[str, date]] = None,
     start_date: Optional[Union[str, date]] = None,
     end_date: Optional[Union[str, date]] = None,
+    get_only_last: bool = False,
 ) -> List[dict]:
     conn = get_conn()
     curr = conn.cursor()
@@ -99,6 +100,8 @@ def get_tot_balances(
     if end_date:
         where_clause += " WHERE " if not where_clause else " AND "
         where_clause += f"date <= '{end_date}'"
+    if get_only_last:
+        where_clause += " ORDER BY date DESC LIMIT 1"
 
     sql_select = sql_select.format(where_clause)
 
