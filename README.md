@@ -32,18 +32,18 @@ Usage: tracker [OPTIONS] COMMAND [ARGS]...
     Set of commands to handle the db app  
                                           
 Subcommands:                              
-  - balance                      All regarding balances                                                                              
-    - list-last                  List last coin balances.                                                                            
-  - coin                         All regarding coins                                                                                 
-    - add                        Add a coin to the db                                                                                
-    - list                       List all coins.                                                                                     
-  - deposit                      All regarding deposits                                                                              
-    - add                        Add the deposit of coin_cmd to the db (transaction in)                                              
-    - list                       List all deposits.                                                                                  
-  - init-db                      Setup the app, creating sqlite db file and db tables                                                
-  - update-all                   Do all recurrent updates necessary (coin_balances, prices and total_balances) and the updated graph.
-  - withdrawal                   All regarding withdrawals                                                                           
-    - add                        Add the withdraw of coin_cmd to the db (transaction out)
+  - balance                      All regarding balances
+    - list-last                  List last coin balances
+  - coin                         All regarding coins
+    - add                        Add a coin to the db
+    - list                       List all coins
+  - deposit                      All regarding deposits
+    - add                        Register the deposit of a coin (transaction in)
+    - list                       List all deposits
+  - init-db                      Setup the app, creating sqlite db file and db tables
+  - monthly-update               Add all missing data (coin_balances, prices and total_balances) and the eur graph and send Telegram messages
+  - withdrawal                   All regarding withdrawals
+    - add                        Register the withrawal of a coin (transaction out)
     - list                       List all withdraws.
 
 ```
@@ -53,9 +53,9 @@ Subcommands:
 # add the coin you are interested in
 $ tracker coin add BTC Bitcoin bitcoin
 
-# add deposit (or withdraws)
+# add deposit (or withdrawal)
 $ tracker deposit add BTC 0.03 2021-11-26
 
 # update all data and send recap graph
-$ tracker update-all
+$ tracker monthly-update
 ```
