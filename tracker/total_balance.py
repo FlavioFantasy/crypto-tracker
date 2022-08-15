@@ -2,7 +2,6 @@ from datetime import date
 from typing import List, Dict
 
 from tracker import db
-from tracker.external_api.telegram_api import send_message
 from tracker.utils import log_info
 
 
@@ -19,16 +18,10 @@ def add_missing_total_balances() -> None:
             f"added {len(missing_total_balances)} rows to tot_balances "
             f"(from {missing_total_balances[0]['date']} to {missing_total_balances[-1]['date']})"
         )
-
-        str_to_send = f"Balance updated on {missing_total_balances[-1]['date']}: {round(missing_total_balances[-1]['eur_amount'], 2)} €"
-        send_message(str_to_send)  # TODO: move to different module
     else:
         msg = "no rows were added"
 
     log_info(f"add_missing_total_balances: {msg}")
-
-    # send recap allocation  # TODO: move to different module
-    send_message(get_day_details(missing_total_balances[-1]["date"]))
 
 
 def calculate_missing_total_balances() -> List[dict]:
@@ -61,30 +54,33 @@ def calculate_missing_total_balances() -> List[dict]:
     return total_balances
 
 
-def get_day_details(date: str) -> str:
-    # details
-    num_coins = {c["coin_id"]: c["amount"] for c in db.balance.get_coin_balances(date)}
-    val_coins = {c["coin_id"]: c["coin_eur"] for c in db.price.select(date)}
+def get_asset_allocation(date_: date) -> dict:
+    """Get portfolio allocation for specified date
+
+    :return: { date:_, tot_eur:_, coins: [ ticker:_, eur_amt:_, coin_amt:_, percentage:_ ] }
+    """
+
+    coin_amt_by_id = {
+        c["coin_id"]: c["amount"] for c in db.balance.get_coin_balances(date_)
+    }
+    coin_eur_by_id = {c["coin_id"]: c["coin_eur"] for c in db.price.select(date_)}
 
     tot_eur = 0
-    last_day_amts = []
-    for c in num_coins:
-        eur_amt = num_coins[c] * val_coins[c]
-        last_day_amts.append(
-            {"coin_id": c, "eur_amount": eur_amt, "coin_amount": num_coins[c]}
+    coin_details = []
+    for c_id, c_amt in coin_amt_by_id.items():
+        eur_amt = round(coin_amt_by_id[c_id] * coin_eur_by_id[c_id], 2)
+        coin_details.append(
+            {
+                "ticker": db.coin.get_symbol_by_id(c_id),
+                "eur_amt": eur_amt,
+                "coin_amt": round(c_amt, 8),
+            }
         )
         tot_eur += eur_amt
-
-    for c in last_day_amts:
-        c["percentage"] = c["eur_amount"] / tot_eur
-        c["coin_name"] = db.coin.get_symbol_by_id(c["coin_id"])
+    for c in coin_details:
+        c["percentage"] = round(c["eur_amt"] / tot_eur, 4)
 
     # order by relevance
-    last_day_amts = sorted(last_day_amts, key=lambda d: d["percentage"], reverse=True)
+    coin_details = sorted(coin_details, key=lambda d: d["percentage"], reverse=True)
 
-    return f"{date} asset allocation:\n" + "\n".join(
-        [
-            f" - {c['coin_name']:<5}: {round(c['eur_amount'], 2):>7.2f}€ ({round(c['percentage'] * 100, 2):05.2f}%)  - {round(c['coin_amount'], 8)}"
-            for c in last_day_amts
-        ]
-    )
+    return {"date": date_, "tot_eur": round(tot_eur, 2), "coins": coin_details}
