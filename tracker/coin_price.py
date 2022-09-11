@@ -5,7 +5,7 @@ import requests
 
 from tracker import db
 from tracker.external_api.coingecko_api import cg_get_coin_price
-from tracker.utils import log_info
+from tracker.utils import log_info, EUR_FAKE_CG_ID
 
 
 def add_missing_coin_prices() -> None:
@@ -15,7 +15,7 @@ def add_missing_coin_prices() -> None:
     if missing_coin_prices:
         # save in db
         for cp in missing_coin_prices:
-            db.price.add(cp["date"], cp["coin_id"], cp["coin_usd"], cp["coin_eur"])
+            db.price.add(cp["date"], cp["coin_id"], cp["coin_eur"])
 
         msg = (
             f"added {len(missing_coin_prices)} rows to prices "
@@ -30,7 +30,7 @@ def add_missing_coin_prices() -> None:
 def get_missing_coin_prices() -> List[dict]:
     """Get missing coin prices, using CoinGecko APIs
 
-    :return: [ { date_, coin_id:_, coin_eur:_, coin_usd:_ }, ... ]
+    :return: [ { date_, coin_id:_, coin_eur:_ }, ... ]
     """
 
     # get missing date-coin
@@ -48,9 +48,15 @@ def get_missing_coin_prices() -> List[dict]:
         t = 10
         while not cp:
             try:
-                cp = cg_get_coin_price(
-                    mp["coin_id"], coin_id_to_coingecko_id[mp["coin_id"]], mp["date"]
-                )
+                coingecko_id = coin_id_to_coingecko_id[mp["coin_id"]]
+                if coingecko_id == EUR_FAKE_CG_ID:
+                    cp = {
+                        "date": mp["date"],
+                        "coin_id": mp["coin_id"],
+                        "coin_eur": 1.00,
+                    }
+                else:
+                    cp = cg_get_coin_price(mp["coin_id"], coingecko_id, mp["date"])
             # exceded 50 reqs in a minute
             except (requests.exceptions.HTTPError, ValueError) as e:
                 # print(f"caught {e} ...")

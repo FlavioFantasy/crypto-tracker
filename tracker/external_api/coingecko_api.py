@@ -11,7 +11,7 @@ cg = CoinGeckoAPI()
 def cg_get_coin_price(coin_id: int, coingecko_id: str, date_: date) -> dict:
     """Get the price of coin on specified date
 
-    :return: { date:_, coin_id:_, coin_eur:_, coin_usd:_ }
+    :return: { date:_, coin_id:_, coin_eur:_ }
     """
 
     coin_history = cg.get_coin_history_by_id(
@@ -22,5 +22,4 @@ def cg_get_coin_price(coin_id: int, coingecko_id: str, date_: date) -> dict:
         "date": date_,
         "coin_id": coin_id,
         "coin_eur": round(coin_history["market_data"]["current_price"]["eur"], 2),
-        "coin_usd": round(coin_history["market_data"]["current_price"]["usd"], 2),
     }

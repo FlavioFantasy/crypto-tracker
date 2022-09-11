@@ -2,6 +2,7 @@ from datetime import date
 from typing import List, Optional, Union
 
 from tracker.db.general import get_conn, tuple_rows_to_dict
+from tracker.utils import DEFAULT_USD_VALUE
 
 
 def select(date_: Optional[Union[str, date]] = None) -> List[dict]:
@@ -50,16 +51,19 @@ def get_missing() -> List[dict]:
 
 
 def add(
-    date_: Union[str, date], coin_id: int, coin_usd: float, coin_eur: float
+    date_: Union[str, date],
+    coin_id: int,
+    coin_eur: float,
+    coin_usd: float = DEFAULT_USD_VALUE,
 ) -> None:
     conn = get_conn()
     curr = conn.cursor()
 
     sql_insert = """
-        INSERT INTO prices (date, coin_id, coin_usd, coin_eur)
+        INSERT INTO prices (date, coin_id, coin_eur, coin_usd)
         VALUES (?, ?, ?, ?)
     """
-    insert_params = [date_, coin_id, coin_usd, coin_eur]
+    insert_params = [date_, coin_id, coin_eur, coin_usd]
     curr.execute(sql_insert, insert_params)
 
     conn.commit()
