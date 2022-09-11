@@ -7,7 +7,7 @@ from tracker.cli.utils import (
     exit_with_failure,
     echo_success,
 )
-from tracker.utils import get_exception_str
+from tracker.utils import get_exception_str, EUR_TICKER, EUR_FAKE_CG_ID
 
 
 @click.group(name="coin", cls=TrackerClickGroup)
@@ -33,6 +33,8 @@ def coin_add_cmd(symbol: str, name: str, coingecko_id: str):
         exit_with_failure("Invalid input")
 
     try:
+        if symbol == EUR_TICKER:
+            coingecko_id = EUR_FAKE_CG_ID
         db.coin.add(symbol, name, coingecko_id)
         echo_success("Coin added to the system")
     except Exception as e:

@@ -4,6 +4,11 @@ from datetime import datetime
 from tracker.config import CurrentConf
 
 
+DEFAULT_USD_VALUE = 0
+EUR_FAKE_CG_ID = "-"
+EUR_TICKER = "EUR"
+
+
 def log_info(msg: str) -> None:
     s = f"[INFO] {datetime.now().strftime('%Y-%m-%d %H:%M:%S')} - {msg}"
     with open(CurrentConf.get().get_log_file(), "a") as f:

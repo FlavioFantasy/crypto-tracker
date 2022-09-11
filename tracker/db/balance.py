@@ -5,6 +5,7 @@ from tracker.db.general import get_conn, tuple_rows_to_dict
 
 
 # region coin-balances
+from tracker.utils import DEFAULT_USD_VALUE
 
 
 def get_coin_balances(date_: Optional[Union[str, date]] = None) -> List[dict]:
@@ -143,7 +144,7 @@ def get_missing_tot_balances() -> List[dict]:
 
 
 def add_tot_balance(
-    date_: Union[str, date], eur_amount: float, usd_amount: float
+    date_: Union[str, date], eur_amount: float, usd_amount: float = DEFAULT_USD_VALUE
 ) -> None:
     conn = get_conn()
     curr = conn.cursor()

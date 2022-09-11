@@ -12,7 +12,7 @@ def add_missing_total_balances() -> None:
     if missing_total_balances:
         # save in db
         for tb in missing_total_balances:
-            db.balance.add_tot_balance(tb["date"], tb["eur_amount"], tb["usd_amount"])
+            db.balance.add_tot_balance(tb["date"], tb["eur_amount"])
 
         msg = (
             f"added {len(missing_total_balances)} rows to tot_balances "
@@ -27,7 +27,7 @@ def add_missing_total_balances() -> None:
 def calculate_missing_total_balances() -> List[dict]:
     """Calculate missing daily balances (value), ordered by date
 
-    :return: [ { date:_, eur_amount:_, usd_amount:_ }, ... ]
+    :return: [ { date:_, eur_amount:_ }, ... ]
     """
 
     missing_total_balances = db.balance.get_missing_tot_balances()
@@ -46,7 +46,6 @@ def calculate_missing_total_balances() -> List[dict]:
         daily_bal = {
             "date": d,
             "eur_amount": sum(c["amount"] * c["coin_eur"] for c in coins_dets),
-            "usd_amount": sum(c["amount"] * c["coin_usd"] for c in coins_dets),
         }
         # print("daily_bal: ", daily_bal)
         total_balances.append(daily_bal)
