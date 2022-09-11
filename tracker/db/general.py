@@ -1,4 +1,5 @@
 import sqlite3
+from pathlib import Path
 from sqlite3 import Connection
 from typing import Dict, List, Tuple
 
@@ -16,6 +17,8 @@ def tuple_rows_to_dict(rows: List[Tuple]) -> List[Dict]:
 
 def get_conn() -> Connection:
     db_file = CurrentConf.get().get_db_file()
+    if not Path(db_file).exists():
+        raise RuntimeError(f"DB file '{db_file}' not found")
 
     conn = sqlite3.connect(db_file, detect_types=sqlite3.PARSE_DECLTYPES)
     conn.row_factory = sqlite3.Row
