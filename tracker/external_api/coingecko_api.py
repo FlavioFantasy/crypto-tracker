@@ -18,8 +18,6 @@ def cg_get_coin_price(coin_id: int, coingecko_id: str, date_: date) -> dict:
         id=coingecko_id, date=date_.strftime("%d-%m-%Y")
     )
 
-    return {
-        "date": date_,
-        "coin_id": coin_id,
-        "coin_eur": round(coin_history["market_data"]["current_price"]["eur"], 2),
-    }
+    # TODO: gestisci qua il timeout se chiedo ma ho fatto trppe richieste
+
+    return round(coin_history["market_data"]["current_price"]["eur"], 2)

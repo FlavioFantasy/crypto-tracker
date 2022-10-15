@@ -4,14 +4,16 @@ from typing import List
 import requests
 
 from tracker import db
+from tracker.external_api.coinbase_api import cb_get_coin_price, CoinbaseInvalidBaseCurrencyError
 from tracker.external_api.coingecko_api import cg_get_coin_price
-from tracker.utils import log_info, EUR_FAKE_CG_ID
+from tracker.utils import log_info, EUR_FAKE_CG_ID, EUR_TICKER
 
 
 def add_missing_coin_prices() -> None:
     """Add missing coin prices, after getting valuation for each day"""
 
     missing_coin_prices = get_missing_coin_prices()
+    exit(0)
     if missing_coin_prices:
         # save in db
         for cp in missing_coin_prices:
@@ -38,32 +40,36 @@ def get_missing_coin_prices() -> List[dict]:
     # print(f"missing_prices: {missing_prices}")
 
     coin_id_to_coingecko_id = {c["id"]: c["coingecko_id"] for c in db.coin.select()}
+    coin_id_to_ticker = {c["id"]: c["symbol"] for c in db.coin.select()}
 
     coin_prices: List[dict] = []
 
     # try untill it fails (max req in a minute)
     for mp in missing_prices:
         # print("\ndoing: ", mp)
-        cp: dict = {}
-        t = 10
-        while not cp:
+        coin_ticker = coin_id_to_ticker[mp["coin_id"]]
+        if coin_ticker == EUR_TICKER:
+            coin_eur = 1.00
+        else:
             try:
-                coingecko_id = coin_id_to_coingecko_id[mp["coin_id"]]
-                if coingecko_id == EUR_FAKE_CG_ID:
-                    cp = {
-                        "date": mp["date"],
-                        "coin_id": mp["coin_id"],
-                        "coin_eur": 1.00,
-                    }
-                else:
-                    cp = cg_get_coin_price(mp["coin_id"], coingecko_id, mp["date"])
-            # exceded 50 reqs in a minute
-            except (requests.exceptions.HTTPError, ValueError) as e:
-                # print(f"caught {e} ...")
-                msg = f"Got {len(coin_prices)}/{len(missing_prices)} prices, waiting {t} secs ..."
-                print(msg)
-                time.sleep(t)
-                t += 10
+                coin_eur = cb_get_coin_price(mp["date"], coin_ticker)
+            except CoinbaseInvalidBaseCurrencyError as e:
+                print(f"Handling {e} using Coingecko APIs...")
+                # TODO: prendi usando coingecko
+
+            msg_e = f"Failed to get {coin_ticker} price (in EUR) for {mp['date']}"
+            assert coin_eur, msg_e
+
+        cp = {
+            "date": mp["date"],
+            "coin_id": mp["coin_id"],
+            "coin_ticker": coin_ticker,
+            "coin_eur": coin_eur,
+        }
+        print(f"cp: {cp}")
         coin_prices.append(cp)
 
     return coin_prices
+
+
+# print(get_missing_coin_prices())
