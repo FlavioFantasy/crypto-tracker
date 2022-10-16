@@ -43,6 +43,7 @@ def get_symbol_by_id(coin_id: int) -> Optional[str]:
 
 
 def select() -> List[dict]:
+    """:return: [ {  } ]"""
     conn = get_conn()
     curr = conn.cursor()
 
