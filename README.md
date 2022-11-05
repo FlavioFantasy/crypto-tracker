@@ -32,19 +32,20 @@ Usage: tracker [OPTIONS] COMMAND [ARGS]...
     Set of commands to handle the db app  
                                           
 Subcommands:                              
-  - balance                      All regarding balances
-    - list-last                  List last coin balances
-  - coin                         All regarding coins
-    - add                        Add a coin to the db
-    - list                       List all coins
-  - deposit                      All regarding deposits
-    - add                        Register the deposit of a coin (transaction in)
-    - list                       List all deposits
-  - init-db                      Setup the app, creating sqlite db file and db tables
+  - balance                      All regarding balances                                                                                      
+    - list-coin-lasts            List last coin balances                                                                                     
+    - list-tot-by-date           List total (EUR) balance by date                                                                            
+  - coin                         All regarding coins                                                                                         
+    - add                        Add a coin to the db                                                                                        
+    - list                       List all coins                                                                                              
+  - deposit                      All regarding deposits                                                                                      
+    - add                        Register the deposit of a coin (transaction in)                                                             
+    - list                       List all deposits                                                                                           
+  - init-db                      Setup the app, creating sqlite db file and db tables                                                        
   - monthly-update               Add all missing data (coin_balances, prices and total_balances) and the eur graph and send Telegram messages
-  - withdrawal                   All regarding withdrawals
+  - withdrawal                   All regarding withdrawals                                                                                   
     - add                        Register the withrawal of a coin (transaction out)
-    - list                       List all withdraws.
+    - list                       List all withdrawals
 
 ```
 
