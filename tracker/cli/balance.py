@@ -1,7 +1,7 @@
 import click
 
 from tracker import db
-from tracker.cli.utils import template_to_title, TrackerClickGroup
+from tracker.cli.utils import template_to_title, TrackerClickGroup, echo_fail
 
 
 @click.group(name="balance", cls=TrackerClickGroup)
@@ -10,8 +10,8 @@ def balance_cmd():
     pass
 
 
-@balance_cmd.command(name="list-last")
-def balance_list_cmd():
+@balance_cmd.command(name="list-coin-lasts")
+def balance_list_coin_lasts_cmd():
     """
     List last coin balances
     """
@@ -28,3 +28,19 @@ def balance_list_cmd():
                 AMOUNT=round(cb["amount"], 8),
             )
         )
+
+
+@balance_cmd.command(name="list-tot-by-date")
+@click.argument("date", type=str)
+def balance_list_tot_by_date_cmd(date: str):
+    """
+    List total (EUR) balance by date
+    """
+
+    tot_balance = db.balance.get_tot_balances(date)
+
+    if not tot_balance:
+        echo_fail(f"No available total balance for {date}")
+    else:
+        tot_eur = f"{tot_balance[0]['eur_amount']:.2f}"
+        click.echo(f"Total balance for {date}: {tot_eur} EUR")

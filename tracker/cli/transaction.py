@@ -102,7 +102,7 @@ def withdrawal_add_cmd(symbol: str, amount: float, date: str):
 @withdrawal_cmd.command(name="list")
 def withdrawal_list_cmd():
     """
-    List all withdraws.
+    List all withdrawals
     """
 
     withdraws = db.transaction.select_withdrawals()
